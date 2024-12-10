@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-greyLight min-h-dvh;
+  font-family: "DM Sans", sans-serif;
+}
+
+.container {
+  @apply p-6 w-full bg-white rounded-[18px];
+}
