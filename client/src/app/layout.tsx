@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Sans } from 'next/font/google';
 import "./globals.css";
+import { StoreProvider } from "./StoreProvider";
 import Menu from "@/components/menu/Menu";
 import Nav from "@/components/nav/Nav";
 
@@ -25,25 +26,27 @@ export default function RootLayout({
       <body
         className={dmSans.className}
       >
-        <div
-          className="grid grid-cols-12 w-full gap-6 p-6"
-        >
+        <StoreProvider>
           <div
-            className="col-span-2"
+            className="grid grid-cols-1 md:grid-cols-8 xl:grid-cols-12 w-full gap-6 p-6"
           >
-            <Menu />
-          </div>
-          <div
-            className="col-span-10"
-          >
-            <Nav />
             <div
-              className="w-full flex flex-col gap-6 py-6"
+              className="col-span-1 md:col-span-3 xl:col-span-2"
             >
-              {children}
+              <Menu />
+            </div>
+            <div
+              className="col-span-1 md:col-span-5 xl:col-span-10"
+            >
+              <Nav />
+              <div
+                className="w-full flex flex-col gap-6 py-6"
+              >
+                {children}
+              </div>
             </div>
           </div>
-        </div>
+        </StoreProvider>
       </body>
     </html>
   );
