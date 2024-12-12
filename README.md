@@ -22,3 +22,18 @@ folder structure
       ├── store                     # redux toolkit store             #I will update this and explain later
       └── types                     # types for the whole application #USE THIS
     └── tailwind.config.ts          # adde colors                     #USE THIS
+
+
+### Server
+
+    ├── controllers                 # all routes logic                # WORK HERE
+    ├── models                      # mongoose schemas                # WORK HERE
+    ├── middleware                  # folder for middleware, I will add this later
+    ├── utils 
+      └── config.js                 # file for all .env imports       # ADD YOUR IMPORTS HERE
+    ├── env.example                 # example file                    # STORE ONLY YOUR KEYS HERE, NOT VALUES
+    ├── app.js                      # imports of middleware, routes, connecting to mongodb
+    └── index.js                    # this file is starting server
+
+
+            
