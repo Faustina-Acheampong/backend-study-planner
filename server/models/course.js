@@ -15,7 +15,7 @@ const courseSchema = new mongoose.Schema({
     },
     course_code: {
         type: String,
-        required: true,
+        required: [true, 'Course code is required'],
         uppercase: true,
         validate: {
             validator: function (value) {
@@ -32,7 +32,6 @@ const courseSchema = new mongoose.Schema({
     },
     course_semester: {
         type: String,
-        required: [true, 'Course semester is required'],
         validate: {
             validator: function (value) {
                 return /^(Autumn|Winter|Spring|Summer)-([1-9]|10)$/.test(value);
