@@ -24,9 +24,7 @@ registerRouter.post(
         const user = new User({
             username,
             email,
-            passwordHash,
-            time: [],
-            tasks: []
+            passwordHash
         });
 
         try {

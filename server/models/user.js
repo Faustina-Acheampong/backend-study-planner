@@ -22,15 +22,8 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    time: {
-        type: Array,
-        required: false
-        // update later this part to time_id[]
-    },
-    tasks: {
-        type: Array,
-        required: false
-        // update later this part to task_id[]
+    refreshToken: {
+        type: String,
     }
 });
 
