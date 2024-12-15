@@ -84,6 +84,7 @@ const courseSchema = new mongoose.Schema({
     timestamps: true  // To add createdAt and updatedAt automatically
 });
 
+
 courseSchema.set('toJSON', {
     transform: (document, returnedObject) => {
         returnedObject.id = returnedObject._id.toString();
