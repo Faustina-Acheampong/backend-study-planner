@@ -1,42 +1,48 @@
 import { PayloadAction } from "@reduxjs/toolkit";
 import { createAppSlice } from "../createAppSlice";
-import { UserType } from "@/types/user";
+import { LoginRequestProps, LoginResponseProps, UserType } from "@/types/user";
+import { login } from "./userAPI";
 
 export interface UserSliceState {
-    token: string | null,
+    accessToken: string | null,
+    refreshToken: string | null,
     user?: UserType
 };
 
 const initialState: UserSliceState = {
-    token: null
+    accessToken: null,
+    refreshToken: null
 };
 
 export const userSlice = createAppSlice({
     name: "user",
     initialState,
     reducers: (create) => ({
-        // setToken: create.asyncThunk(
-        //     async (password: string) => {
-        //         const token = await adminLogin(password);
-        //         return token;
-        //     },
-        //     {
-        //         fulfilled: (state, action: PayloadAction<string | null>) => {
-        //             state.token = action.payload;
-        //         },
-        //         rejected: (state) => {
-        //             state.token = null;
-        //         },
-        //     },
-        // ),
-        clearToken: create.reducer((state) => {
-            state.token = null;
+        setTokens: create.asyncThunk(
+            async (data: LoginRequestProps) => {
+                const result = await login(data);
+                return result;
+            },
+            {
+                fulfilled: (state, action: PayloadAction<LoginResponseProps>) => {
+                    state = action.payload;
+                },
+                rejected: (state) => {
+                    state.refreshToken = null;
+                    state.accessToken = null;
+                },
+            },
+        ),
+        clearTokens: create.reducer((state) => {
+            state.accessToken = null;
+            state.refreshToken = null;
         }),
     }),
     selectors: {
-        selectToken: (user) => user.token,
+        selectAccessToken: (user) => user.accessToken,
+        selectRefreshToken: (user) => user.refreshToken
     },
 });
 
-export const { clearToken } = userSlice.actions;
-export const { selectToken } = userSlice.selectors;
+export const { clearTokens, setTokens } = userSlice.actions;
+export const { selectAccessToken, selectRefreshToken } = userSlice.selectors;
