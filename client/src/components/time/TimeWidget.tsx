@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { useState, useEffect, useRef } from "react";
-import { CirclePlay, CircleStop } from "lucide-react";
+import { CirclePlay, CircleStop,Timer  } from "lucide-react";
 
 {
   /* component that is in the menu */
@@ -60,6 +60,7 @@ const TimeWidget = () => {
   return (
     <div>
       TimeWidget
+      <Timer size={40}  className="my-4"/>
       <div className="bg-purple-100 p-4 rounded-lg flex flex-col items-center">
         {/* Display Time */}
         <span className="text-2xl font-semibold text-teal-700 mb-4">
