@@ -1,5 +1,17 @@
+"use client";
 import React from "react";
 import { useState, useEffect, useRef } from "react";
+import { CirclePlay, CircleStop } from "lucide-react";
+
+{
+  /* component that is in the menu */
+}
+{
+  /* display time */
+}
+{
+  /* stop, start counting */
+}
 
 const TimeWidget = () => {
   const [time, setTime] = useState(0);
@@ -18,19 +30,61 @@ const TimeWidget = () => {
 
   // Stop the timer function
   const stopTimer = () => {
-    if (!isRunning) {
+    if (isRunning) {
       clearInterval(intervalRef.current as NodeJS.Timeout | number);
       intervalRef.current = null;
       setIsRunning(false);
     }
   };
 
+  // Cleanup the timer when the component unmounts
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, []);
+
+  // Format time as MM:SS
+
+  const formateTime = (timeInSeconds: number): string => {
+    const minutes: string = String(Math.floor(timeInSeconds / 60)).padStart(
+      2,
+      "0"
+    );
+    const seconds: string = String(timeInSeconds % 60).padStart(2, "0");
+    return `${minutes}:${seconds}`;
+  };
+
   return (
     <div>
       TimeWidget
-      {/* component that is in the menu */}
-      {/* display time */}
-      {/* stop, start counting */}
+      <div className="bg-purple-100 p-4 rounded-lg flex flex-col items-center">
+        {/* Display Time */}
+        <span className="text-2xl font-semibold text-teal-700 mb-4">
+          {formateTime(time)}
+        </span>
+        {/* Buttons Section */}
+        <div className="flex space-x-4">
+          {/* Start Button */}
+          <button
+            onClick={startTime}
+            className="bg-green-500 text-white px-4 py-2 rounded-lg shadow-md flex items-center hover:bg-green-600 transition"
+          >
+            <CirclePlay size={20} className="mr-2" />
+            Start
+          </button>
+          {/* Stop Button */}
+          <button
+            onClick={stopTimer}
+            className="bg-red-500 text-white px-4 py-2 rounded-lg shadow-md flex items-center hover:bg-red-600 transition"
+          >
+            <CircleStop size={20} className="mr-2" />
+            Stop
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
