@@ -6,6 +6,7 @@ const TimeWidget = () => {
             TimeWidget
             {/* component that is in the menu */}
             {/* display time */}
+            
             {/* stop, start counting */}
         </div>
     );
