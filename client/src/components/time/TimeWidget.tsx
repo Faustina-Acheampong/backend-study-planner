@@ -1,6 +1,21 @@
 import React from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const TimeWidget = () => {
+
+    const[time, setTime] = useState(0);
+    const[isRunning, setIsRunning]= useState(false);
+    const intervalRef = useRef<NodeJS.Timeout | number | null>(null);
+
+     // Start the timer function
+    const startTime = () =>{
+        if (!isRunning) {
+            intervalRef.current = setInterval (() => {
+              setTime((prevTime) => prevTime + 1);
+            },1000);
+            setIsRunning(true);
+        }
+    };
     return (
         <div>
             TimeWidget
