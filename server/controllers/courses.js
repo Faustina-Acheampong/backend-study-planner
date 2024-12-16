@@ -43,13 +43,12 @@ coursesRouter.post('/', validateRequiredFields(requiredFields), async (req, res)
     }
 });
 
-// Get request to retrieve all courses
+// GET request to retrieve all courses
 coursesRouter.get('/', async (req, res) => {
     try {
-        // Fetch courses sorted by creation date (newest first)
-        const courses = await Course.find().sort({ createdAt: -1 }); 
-        
-        // If no courses found, return an empty array and a message
+        // Fetch non-archived courses sorted by creation date (newest first)
+        const courses = await Course.find({ is_archived: false }).sort({ createdAt: -1 }); 
+    
         if (courses.length === 0) {
             return res.status(200).json({
                 success: true,
@@ -74,7 +73,7 @@ coursesRouter.get('/', async (req, res) => {
     }
 });
 
-// Get request to retrieve a single course by ID
+// GET request to retrieve a single course by ID
 coursesRouter.get('/:id', async (req, res) => {
     try {
         const { id } = req.params;
@@ -105,7 +104,7 @@ coursesRouter.get('/:id', async (req, res) => {
     }
 });
 
-// Get rquest to retrieve all courses by optional filters
+// GET request to retrieve all courses by optional filters
 coursesRouter.get('/', async (req, res) => {
     try {
         // Extract filter parameters from query string
@@ -198,16 +197,140 @@ coursesRouter.put('/:id', async (req, res) => {
     } catch (error) {
         console.error('Error updating course:', error);
 
-        // If the error is related to validation, respond with a 400 status
         if (error.name === 'ValidationError') {
             return res.status(400).json({
                 message: 'Validation error.',
                 errors: Object.values(error.errors).map(err => err.message)
             });
         }
-        // For other errors, respond with a 500 status
         res.status(500).json({
-            message: 'An error occurred while updating the course.',
+            message: 'Error updating the course. Please try again.',
+            error: error.message
+        });
+    }
+});
+
+// DELETE request to delete a course by ID
+coursesRouter.delete('/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const deletedCourse = await Course.findByIdAndDelete(id);
+
+        if (!deletedCourse) {
+            return res.status(404).json({ message: 'Course not found.' });
+        }
+
+        res.status(200).json({
+            message: 'Course deleted successfully.',
+            data: deletedCourse
+        });
+    } catch (error) {
+        console.error('Error deleting course:', error);
+        res.status(500).json({
+            message: 'Error deleting the course. Please try again later',
+            error: error.message
+        });
+    }
+});
+
+// PATCH request to archive a course
+coursesRouter.patch('/:id/archive', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const course = await Course.findById(id);
+
+        if (!course) {
+            return res.status(404).json({
+                success: false,
+                message: 'Course not found'
+            });
+        }
+
+        // Check if course can be archived using the schema method
+        const { canArchive, reasons } = await course.canBeArchived();
+
+        if (!canArchive) {
+            return res.status(400).json({
+                success: false,
+                message: 'Course cannot be archived',
+                reasons: reasons
+            });
+        }
+
+        // Update course status and archive flag
+        const updatedCourse = await Course.findByIdAndUpdate(
+            id,
+            {
+                course_status: 'Archived',
+                is_archived: true
+            },
+            {
+                new: true,
+                runValidators: true
+            }
+        );
+
+        res.status(200).json({
+            success: true,
+            message: 'Course archived successfully',
+            data: updatedCourse
+        });
+
+    } catch (error) {
+        console.error('Error archiving course:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error archiving course. Please try again.',
+            error: error.message
+        });
+    }
+});
+
+// PATCH request to unarchive a course
+coursesRouter.patch('/:id/unarchive', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const course = await Course.findById(id);
+
+        if (!course) {
+            return res.status(404).json({
+                success: false,
+                message: 'Course not found'
+            });
+        }
+
+        if (!course.is_archived) {
+            return res.status(400).json({
+                success: false,
+                message: 'Course is not archived'
+            });
+        }
+
+        const updatedCourse = await Course.findByIdAndUpdate(
+            id,
+            {
+                // Set status back to 'Completed' if it was archived
+                course_status: 'Completed',
+                is_archived: false
+            },
+            {
+                new: true,
+                runValidators: true
+            }
+        );
+
+        res.status(200).json({
+            success: true,
+            message: 'Course unarchived successfully',
+            data: updatedCourse
+        });
+
+    } catch (error) {
+        console.error('Error unarchiving course:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error unarchiving course. Please try again.',
             error: error.message
         });
     }
