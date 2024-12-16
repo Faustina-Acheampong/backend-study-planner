@@ -18,3 +18,9 @@ export type LoginResponseProps = {
     refreshToken: string,
     user: UserType
 };
+
+export type RegisterRequestProps = {
+    email: string,
+    username: string,
+    password: string
+};

@@ -1,7 +1,7 @@
 import { PayloadAction } from "@reduxjs/toolkit";
 import { createAppSlice } from "../createAppSlice";
-import { LoginRequestProps, LoginResponseProps, UserType } from "@/types/user";
-import { login } from "./userAPI";
+import { LoginRequestProps, LoginResponseProps, RegisterRequestProps, UserType } from "@/types/user";
+import { login, register } from "./userAPI";
 
 export interface UserSliceState {
     accessToken: string | null,
@@ -18,6 +18,21 @@ export const userSlice = createAppSlice({
     name: "user",
     initialState,
     reducers: (create) => ({
+        registerUser: create.asyncThunk(
+            async (data: RegisterRequestProps) => {
+                const result = await register(data);
+                return result;
+            },
+            {
+                fulfilled: () => {
+
+                },
+                rejected: (state) => {
+                    state.refreshToken = null;
+                    state.accessToken = null;
+                },
+            },
+        ),
         setTokens: create.asyncThunk(
             async (data: LoginRequestProps) => {
                 const result = await login(data);
@@ -44,5 +59,5 @@ export const userSlice = createAppSlice({
     },
 });
 
-export const { clearTokens, setTokens } = userSlice.actions;
+export const { clearTokens, setTokens, registerUser } = userSlice.actions;
 export const { selectAccessToken, selectRefreshToken } = userSlice.selectors;
