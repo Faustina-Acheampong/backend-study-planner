@@ -17,6 +17,7 @@ const courseSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Course code is required'],
         uppercase: true,
+        unique: true,
         validate: {
             validator: function (value) {
                 return /^[A-Z]{2}[0-9]{4}$/.test(value);
@@ -79,11 +80,40 @@ const courseSchema = new mongoose.Schema({
         ref: 'User',
         required: [true, 'User ID is required']
     },
+    is_archived: {
+        type: Boolean,
+        default: false
+    },
+    course_status: {
+        type: String,
+        enum: ['Ongoing', 'Upcoming', 'Completed', 'Archived'],
+        default: 'Ongoing',
+        required: [true, 'Course status is required']
+    },
 }, { 
     timestamps: true  // To add createdAt and updatedAt automatically
 });
 
+// Define instance method to check if course can be archived
+courseSchema.methods.canBeArchived = async function() {
+    
+    const hasPendingAssignments = await mongoose.model('Assignment')
+      .exists({
+        course: this._id,
+        status: 'Pending'
+      });
+    const isOngoing = this.course_status === 'Ongoing';
 
+      return {
+        canArchive: !hasPendingAssignments && !isOngoing,
+        reasons: [
+          ...(hasPendingAssignments ? ['Course has pending assignments'] : []),
+          ...(isOngoing ? ['Course is currently in session'] : [])
+        ]
+      };
+};  
+
+// Transform _id to id for JSON responses
 courseSchema.set('toJSON', {
     transform: (document, returnedObject) => {
         returnedObject.id = returnedObject._id.toString();

@@ -115,6 +115,7 @@ coursesRouter.get('/', async (req, res) => {
             course_instructor,
             course_semester,
             course_code,
+            course_status
           } = req.query;
 
         // Create an empty filter object to store the filters
@@ -136,6 +137,9 @@ coursesRouter.get('/', async (req, res) => {
        }
        if (course_code) {
         filter.course_code = { $regex: course_code, $options: 'i' };
+       }
+       if (course_status) {
+        filter.course_status = course_status;
        }
 
         const courses = await Course.find(filter).sort({ createdAt: -1 }); // Sort newest first
