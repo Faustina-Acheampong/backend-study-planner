@@ -43,7 +43,7 @@ coursesRouter.post('/', validateRequiredFields(requiredFields), async (req, res)
     }
 });
 
-// Retrieve all courses
+// Get request to retrieve all courses
 coursesRouter.get('/', async (req, res) => {
     try {
         // Fetch courses sorted by creation date (newest first)
@@ -74,7 +74,7 @@ coursesRouter.get('/', async (req, res) => {
     }
 });
 
-// Retrieve a single course by ID
+// Get request to retrieve a single course by ID
 coursesRouter.get('/:id', async (req, res) => {
     try {
         const { id } = req.params;
@@ -105,7 +105,7 @@ coursesRouter.get('/:id', async (req, res) => {
     }
 });
 
-// Retrieve all courses by optional filters
+// Get rquest to retrieve all courses by optional filters
 coursesRouter.get('/', async (req, res) => {
     try {
         // Extract filter parameters from query string
@@ -117,7 +117,7 @@ coursesRouter.get('/', async (req, res) => {
             course_code,
           } = req.query;
 
-        // Build filter object
+        // Create an empty filter object to store the filters
         const filter = {};
         
         // Add filters only if they exist in query params
@@ -138,7 +138,6 @@ coursesRouter.get('/', async (req, res) => {
         filter.course_code = { $regex: course_code, $options: 'i' };
        }
 
-        
         const courses = await Course.find(filter).sort({ createdAt: -1 }); // Sort newest first
 
         // Check if any courses are found
@@ -165,6 +164,47 @@ coursesRouter.get('/', async (req, res) => {
             success: false,
             error: 'Error retrieving courses. Please try again.',
             details: error.message,
+        });
+    }
+});
+
+// PUT request to update a course by ID
+coursesRouter.put('/:id', async (req, res) => {
+    try {
+        const { id } = req.params; 
+        const updateData = req.body; 
+
+        // Validate that the request body is not empty
+        if (!Object.keys(updateData).length) {
+            return res.status(400).json({ message: 'No update data provided.' });
+        }
+
+        const updatedCourse = await Course.findByIdAndUpdate(id, updateData, {
+            new: true, 
+            runValidators: true // Ensure validations are run on the updated data
+        });
+
+        if (!updatedCourse) {
+            return res.status(404).json({ message: 'Course not found.' });
+        }
+        res.status(200).json({
+            message: 'Course updated successfully.',
+            data: updatedCourse
+        });
+    } catch (error) {
+        console.error('Error updating course:', error);
+
+        // If the error is related to validation, respond with a 400 status
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({
+                message: 'Validation error.',
+                errors: Object.values(error.errors).map(err => err.message)
+            });
+        }
+        // For other errors, respond with a 500 status
+        res.status(500).json({
+            message: 'An error occurred while updating the course.',
+            error: error.message
         });
     }
 });
