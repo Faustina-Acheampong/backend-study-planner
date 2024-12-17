@@ -22,7 +22,7 @@ const courseSchema = new mongoose.Schema({
             validator: function (value) {
                 return /^[A-Z]{2}[0-9]{4}$/.test(value);
             },
-            message: 'Course code must be in the format: AB-1234'
+            message: 'Course code must be in the format: AB1234'
         }
     },
     course_instructor: {
@@ -37,7 +37,7 @@ const courseSchema = new mongoose.Schema({
             validator: function (value) {
                 return /^(Autumn|Winter|Spring|Summer)-([1-9]|10)$/.test(value);
             },
-            message: 'Semester must be in the format: Fall-1'
+            message: 'Semester must be in the format: Autumn-1'
         }
     },
     course_location: {
