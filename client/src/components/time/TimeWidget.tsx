@@ -49,10 +49,7 @@ const TimeWidget = () => {
   // Format time as MM:SS
 
   const formateTime = (timeInSeconds: number): string => {
-    const minutes: string = String(Math.floor(timeInSeconds / 60)).padStart(
-      2,
-      "0"
-    );
+    const minutes: string = String(Math.floor(timeInSeconds / 60)).padStart(2, "0");
     const seconds: string = String(timeInSeconds % 60).padStart(2, "0");
     return `${minutes}:${seconds}`;
   };
