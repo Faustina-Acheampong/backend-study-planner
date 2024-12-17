@@ -10,7 +10,6 @@ import { coursesRouter } from './controllers/courses.js';
 import { notesRouter } from './controllers/notes.js';
 import { tasksRouter } from './controllers/tasks.js';
 import { timesRouter } from './controllers/times.js';
-
 export const app = express();
 mongoose.set('strictQuery', false);
 
