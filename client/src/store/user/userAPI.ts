@@ -13,6 +13,6 @@ export const register = async (data: RegisterRequestProps) => {
     return response.data;
 }
 
-export const logout = async () => {
-
+export const logout = async (refreshToken: string) => {
+    const response = await axios.post(`${baseUrl}/logout`, refreshToken);
 };
