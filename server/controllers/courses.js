@@ -1,4 +1,6 @@
 import express from 'express';
+import mongoose from'mongoose';
+import User from '../models/user.js';
 import Course from '../models/course.js';
 
 export const coursesRouter = express.Router();
@@ -14,14 +16,32 @@ const validateRequiredFields = (requiredFields) => (req, res, next) => {
     next();
 };
 
+// Middleware for validating user_id
+const validateUserId = async (req, res, next) => {
+    const { user_id } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(user_id)) {
+        return res.status(400).json({ message: "Invalid user_id format" });
+    }
+
+    const userExists = await User.findById(user_id);
+    if (!userExists) {
+        return res.status(400).json({ message: "User not found" });
+    }
+
+    next();
+};
+
 const requiredFields = ['course_name', 'course_day', 'course_code', 'course_instructor', 'course_time', 'user_id'];
 
-
 // POST request to create a new course
-coursesRouter.post('/', validateRequiredFields(requiredFields), async (req, res) => {
+coursesRouter.post('/', validateRequiredFields(requiredFields), validateUserId, async (req, res) => {
     try {
         const course = new Course(req.body);
+
         const savedCourse = await course.save();
+
+        console.log("Course created successfully:", savedCourse);
         res.status(201).json({ 
             success: true,
             message: 'Course created succesfully', 
@@ -29,6 +49,10 @@ coursesRouter.post('/', validateRequiredFields(requiredFields), async (req, res)
         });
 
     } catch (error) {
+
+        console.error("Error creating course:", error.message); 
+        console.error("Detailed error:", error); 
+
         if (error.name === 'ValidationError') {
             return res.status(400).json({ 
                 success: false,
@@ -46,13 +70,24 @@ coursesRouter.post('/', validateRequiredFields(requiredFields), async (req, res)
 // GET request to retrieve all courses
 coursesRouter.get('/', async (req, res) => {
     try {
-        // Fetch non-archived courses sorted by creation date (newest first)
-        const courses = await Course.find({ is_archived: false }).sort({ createdAt: -1 }); 
-    
+        
+        const { include_archived = 'false' } = req.query;
+
+        const filter = {};
+        if (include_archived.toLowerCase() !== 'true') {
+            filter.is_archived = false;
+        }
+
+        const [courses, archivedCount] = await Promise.all([
+            Course.find(filter).sort({ createdAt: -1 }),
+            Course.countDocuments({ is_archived: true })
+        ]);
+
         if (courses.length === 0) {
             return res.status(200).json({
                 success: true,
                 count: 0,
+                archivedCount,
                 data: [],
                 message: 'No courses found. Please add a course.' 
             });
@@ -61,6 +96,7 @@ coursesRouter.get('/', async (req, res) => {
         res.status(200).json({
             success: true,
             count: courses.length,
+            archivedCount,
             data: courses
         });
     } catch (error) {
