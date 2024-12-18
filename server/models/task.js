@@ -1,10 +1,11 @@
 import mongoose from "mongoose";
 
 const taskSchema = new mongoose.Schema({
-  task_title: { type: String, required: true },  // snake_case field name
+  // task model
+  task_title: { type: String, required: true },  
   task_description: { type: String },
   task_due_date: { type: Date },
-  is_task_completed: { type: Boolean, default: false },  // Changed to Boolean for frontend compatibility
+  is_task_completed: { type: Boolean, default: false },  
   task_priority: {
     type: String,
     enum: ['Low', 'Medium', 'High'],
@@ -23,6 +24,8 @@ const taskSchema = new mongoose.Schema({
   assignment_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Assignment',
+    required: false, //  as optional
+    default: null,
   },
   time: [
     {
@@ -30,26 +33,8 @@ const taskSchema = new mongoose.Schema({
       ref: 'Time',
     }
   ],
- // task model
-//  taskTitle: { type: String, required: true },
-//  taskDescription: { type: String },
-//  taskDueDate: { type: Date },
-//  taskStatus: {
-//    type: String,
-//    enum: ['pending', 'completed'],
-//    default: 'pending',
-//  },
-//  taskPriority: {
-//    type: String,
-//    enum: ['Low', 'Medium', 'High'],
-//    default: 'Medium',
-//  },
-//  isTaskCompleted: { type: Boolean, default: false },
-//  userId: {
-//    type: mongoose.Schema.Types.ObjectId,
-//    ref: 'User',
-//    required: true,
-//  },
+ 
+
 });
 
 taskSchema.set("toJSON", {
