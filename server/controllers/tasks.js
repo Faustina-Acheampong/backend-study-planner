@@ -109,7 +109,7 @@ tasksRouter.put(
   }
 );
 
-// 4. Delete a task
+// 4. route to Delete a task
 tasksRouter.delete("/:id", async (req, res) => {
   try {
     const deletedTask = await Task.findByIdAndDelete(req.params.id);
