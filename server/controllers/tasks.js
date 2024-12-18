@@ -125,7 +125,7 @@ tasksRouter.delete("/:id", async (req, res) => {
   }
 });
 
-// Toggle task completion status
+//  route for Toggle task completion status
 tasksRouter.patch("/:id/toggle-completed", async (req, res) => {
   try {
     const { id } = req.params; // Extract `id` from `req.params`
