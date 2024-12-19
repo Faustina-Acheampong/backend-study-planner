@@ -18,7 +18,7 @@ const ScheduleWidget = () => {
         >
           Weekly Schedule/Calendar
         </Link>
-        <button className="px-4 py-2 bg-blue-200 text-black rounded hover:bg-blue-400">
+        <button className="px-4 py-2 bg-blue-300 text-black rounded hover:bg-blue-400">
           Show All
         </button>
       </div>
