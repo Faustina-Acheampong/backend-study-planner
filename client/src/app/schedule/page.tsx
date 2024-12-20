@@ -43,11 +43,11 @@ export default function SchedulePage() {
       Schedule Page
       <div className="container mx-auto p-6 bg-gray-100 min-h-screen">
         <h1 className="text-3xl font-bold text-center mb-6">Schedule Page</h1>
-        <div className="bg-white rounded-lg shadow-lg p-4">
+        <div className="bg-white rounded-lg shadow-lg p-4 ">
           {/* Month View Calendar */}
           <div className="mb-6">
             <Calendar
-              onClickDay={handleDayClick} // Using onClickDay instead of onChange
+              onClickDay={handleDayClick} 
               value={selectedDate}
             />
             <div className="mt-4">
