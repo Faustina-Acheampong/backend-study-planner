@@ -1,28 +1,32 @@
-import express from 'express';
-import Assignment from '../models/assignment.js';
-import mongoose from 'mongoose';
+import express from "express";
+import Assignment from "../models/assignment.js";
+import mongoose from "mongoose";
 
 export const assignmentsRouter = express.Router();
 
-assignmentsRouter.get('/', async (req, res) => {
+// get all the assignments
+assignmentsRouter.get("/", async (req, res) => {
   try {
     const assignments = await Assignment.find();
     res.status(200).json(assignments);
   } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch assignments' });
+    res.status(500).json({ message: "Failed to fetch assignments" });
   }
 });
 
-assignmentsRouter.get('/:[id]', async (req, res) => {
+// get req by id
+assignmentsRouter.get("/:id", async (req, res) => {
+  const id = req.params.id;
   try {
-    const assignments = await Assignment.findById();
+    const assignments = await Assignment.findById(id);
     res.status(200).json(assignments);
   } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch assignments' });
+    res.status(500).json({ message: "Failed to fetch assignments" });
   }
 });
 
-assignmentsRouter.post('/', async (req, res) => {
+// add a single assignment
+assignmentsRouter.post("/", async (req, res) => {
   try {
     const {
       title,
@@ -47,13 +51,62 @@ assignmentsRouter.post('/', async (req, res) => {
     const savedAssignment = await newAssignment.save();
 
     res.status(201).json({
-      message: 'Assignment created successfully',
+      message: "Assignment created successfully",
       assignment: savedAssignment,
     });
   } catch (error) {
     res.status(400).json({
-      message: 'Failed to create assignment',
+      message: "Failed to create assignment",
       error: error.message,
     });
+  }
+});
+
+//Delete a single assignment
+assignmentsRouter.delete("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedAssignment = await Assignment.findByIdAndDelete(id);
+    if (!deletedAssignment) {
+      return res.status(404).json({ message: "Assignment not found" });
+    }
+    res.status(200).json({
+      message: "Assignment deleted successfully",
+      assignment: deletedAssignment,
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Failed to delete assignment", error: error.message });
+  }
+});
+
+// updating a single assignment
+assignmentsRouter.put("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
+
+    const updatedAssignment = await Assignment.findByIdAndUpdate(
+      id,
+      updateData,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    if (!updatedAssignment) {
+      return res.status(404).json({ message: "Assignment not found" });
+    }
+
+    res.status(200).json({
+      message: "Assignment updated successfully",
+      assignment: updatedAssignment,
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Failed to update assignment", error: error.message });
   }
 });
