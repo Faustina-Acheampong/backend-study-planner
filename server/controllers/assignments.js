@@ -81,7 +81,7 @@ assignmentsRouter.delete("/:id", async (req, res) => {
   }
 });
 
-// updating a single assignment
+// update a single assignment
 assignmentsRouter.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
