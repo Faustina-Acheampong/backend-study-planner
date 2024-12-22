@@ -1,7 +1,7 @@
 import { PayloadAction } from "@reduxjs/toolkit";
 import { createAppSlice } from "../createAppSlice";
 import { LoginRequestProps, LoginResponseProps, RegisterRequestProps, UserType } from "@/types/user";
-import { login, register } from "./userAPI";
+import { login, register, logout } from "./userAPI";
 
 export interface UserSliceState {
     accessToken: string | null,
@@ -40,7 +40,9 @@ export const userSlice = createAppSlice({
             },
             {
                 fulfilled: (state, action: PayloadAction<LoginResponseProps>) => {
-                    state = action.payload;
+                    state.refreshToken = action.payload.refreshToken;
+                    state.accessToken = action.payload.accessToken;
+                    state.user = action.payload.user;
                 },
                 rejected: (state) => {
                     state.refreshToken = null;
@@ -48,16 +50,30 @@ export const userSlice = createAppSlice({
                 },
             },
         ),
-        clearTokens: create.reducer((state) => {
-            state.accessToken = null;
-            state.refreshToken = null;
-        }),
+        clearTokens: create.asyncThunk(
+            async (refreshToken: string) => {
+                const result = await logout(refreshToken);
+            },
+            {
+                fulfilled: (state) => {
+                    state = {
+                        accessToken: null,
+                        refreshToken: null
+                    }
+                },
+                rejected: (state) => {
+
+                },
+            },
+        )
     }),
     selectors: {
         selectAccessToken: (user) => user.accessToken,
-        selectRefreshToken: (user) => user.refreshToken
+        selectRefreshToken: (user) => user.refreshToken,
+        selectUserId: (user) => user.user?.id,
+        selectUser: (user) => user.user
     },
 });
 
 export const { clearTokens, setTokens, registerUser } = userSlice.actions;
-export const { selectAccessToken, selectRefreshToken } = userSlice.selectors;
+export const { selectAccessToken, selectRefreshToken, selectUserId, selectUser } = userSlice.selectors;

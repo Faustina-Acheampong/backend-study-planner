@@ -6,7 +6,7 @@ import Link from "next/link";
 const Menu = () => {
   return (
     <div className="container">
-      Menu
+     <h1 className=" text-gray-900  transition my-4 text-center text-2xl  font-bold font-sans"> Menu</h1>
       {/*this is left menu */}
       <Link
         href="/schedule"
