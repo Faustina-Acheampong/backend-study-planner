@@ -40,17 +40,12 @@ export default function SchedulePage() {
 
   return (
     <div className="container">
-     
       <div className="container mx-auto p-6 bg-gray-100 min-h-screen">
         <h1 className="text-3xl font-bold text-center mb-6">Schedule Page</h1>
         <div className="bg-white rounded-lg shadow-lg p-4 ">
           {/* Month View Calendar */}
           <div className="mb-6 flex flex-col items-center">
-            <Calendar
-
-              onClickDay={handleDayClick} 
-              value={selectedDate}
-            />
+            <Calendar onClickDay={handleDayClick} value={selectedDate} />
             <div className="mt-4">
               <h2 className="text-xl font-semibold">
                 Tasks for {selectedDate.toDateString()}:
@@ -61,6 +56,9 @@ export default function SchedulePage() {
                     <li key={task.id} className="text-gray-700">
                       <strong>{task.task_title}</strong> ({task.task_priority}{" "}
                       priority) - {task.task_priority}
+                      <p className="text-gray-600 text-sm mt-1">
+                        {task.task_description || "No description provided."}
+                      </p>
                     </li>
                   ))
                 ) : (
