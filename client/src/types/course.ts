@@ -1,8 +1,8 @@
 import { NoteType } from "./note";
 import { AssignmentType } from "./assignment";
 
-type Days = 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday';
-type Status = 'Ongoing' | 'Upcoming' | 'Completed' | 'Archived';
+export type Days = 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday';
+export type Status = 'Ongoing' | 'Upcoming' | 'Completed' | 'Archived';
 
 export type CourseType = {
     id: string,
