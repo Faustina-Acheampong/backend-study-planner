@@ -18,10 +18,10 @@ export default function CourseCard({ course, className = '' }: CourseCardProps) 
         >
             <div className="h-full rounded-lg overflow-hidden">
                 {/* Header with dark gray background */}
-                <div className="bg-gray-700 h-20 rounded-t-lg" />
+                <div className="bg-greyDark h-20 rounded-t-lg" />
                 
                 {/* Content area */}
-                <div className="bg-gray-200 p-4 rounded-b-lg">
+                <div className="bg-greyLight p-4 rounded-b-lg">
                     {/* Course title */}
                     <h3 className="font-medium text-md mb-4">
                         {course.course_name}
