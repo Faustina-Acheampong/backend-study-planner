@@ -7,11 +7,11 @@ import {
     selectSelectedCourse, 
     selectLoading, 
     selectError,
-    deleteCourse,
     updateCourse 
 } from '@/store/course/courseSlice';
 import { Pencil, Trash2, Archive } from 'lucide-react';
 import CourseEditModal from '@/components/courses/EditCourseModal';
+import ArchiveCourseModal from '@/components/courses/ArchiveCourseModal';
 import CourseDeleteModal from '@/components/courses/DeleteCourseModal';
 import { CourseInfo } from '@/components/courses/CourseInfo';
 import { CourseSchedule } from '@/components/courses/CourseSchedule';
@@ -29,6 +29,7 @@ export default function CoursePage() {
 
     // Modal states
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isArchiveModalOpen, setIsArchiveModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
     useEffect(() => {
@@ -43,9 +44,8 @@ export default function CoursePage() {
         setIsEditModalOpen(false);
     };
 
-    const handleArchive = async () => {
-        // Add archive logic here - this will be implemented later
-        console.log('Archiving course', id);
+    const handleArchive = () => {
+        setIsArchiveModalOpen(true);
     };
 
     // Loading state
@@ -142,9 +142,9 @@ export default function CoursePage() {
 
                 {/* Description section */}
                 {course.course_description && (
-                    <div className="mt-8">
+                    <div className="mt-8 w-full md:w-1/3">
                         <h2 className="text-lg font-semibold mb-2">Description</h2>
-                        <p className="bg-white rounded-lg shadow-sm border border-gray-100 text-black">
+                        <p className="bg-white rounded-lg shadow-sm border border-gray-100 text-black p-4">
                             {course.course_description}
                         </p>
                     </div>
@@ -159,12 +159,21 @@ export default function CoursePage() {
                 onSubmit={handleEditSubmit}
             />
 
+            <ArchiveCourseModal
+                courseId={id}
+                courseName={course.course_name}
+                isOpen={isArchiveModalOpen}
+                onClose={() => setIsArchiveModalOpen(false)}
+            />
+
             <CourseDeleteModal
                 courseId={id}
                 courseName={course.course_name}
                 isOpen={isDeleteModalOpen}
                 onClose={() => setIsDeleteModalOpen(false)}
             />
+            {/* Notes section */}
+            {/* Assignments section */}
         </div>
     );
 }

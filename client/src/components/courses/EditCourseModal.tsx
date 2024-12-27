@@ -65,22 +65,16 @@ export default function CourseEditModal({
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-        // Trim the value for text inputs
-        const trimmedValue = typeof value === 'string' ? value.trim() : value;
-
-        if (name.startsWith('course_time.')) {
-            const timeField = name.split('.')[1];
+        // Only trim if it's not the description field
+        if (name !== 'course_description' && typeof value === 'string') {
             setFormData(prev => ({
                 ...prev,
-                course_time: {
-                    ...prev.course_time,
-                    [timeField]: value
-                }
+                [name]: value.trim()
             }));
         } else {
             setFormData(prev => ({
                 ...prev,
-                [name]: trimmedValue
+                [name]: value
             }));
         }
     };
@@ -270,6 +264,13 @@ export default function CourseEditModal({
                                         name="course_description"
                                         value={formData.course_description}
                                         onChange={handleChange}
+                                        onBlur={(e) => {
+                                            const trimmedValue = e.target.value.trim();
+                                            setFormData(prev => ({
+                                                ...prev,
+                                                course_description: trimmedValue
+                                            }));
+                                        }}
                                         className="w-full p-2 border rounded-lg"
                                         rows={4}
                                     />
