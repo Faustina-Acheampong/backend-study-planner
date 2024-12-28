@@ -8,7 +8,7 @@ export function CourseStatus({ course_status }: CourseStatusProps) {
       course_status === 'Ongoing' ? 'bg-green-100 text-green-800' :
       course_status === 'Upcoming' ? 'bg-blue-100 text-blue-800' :
       course_status === 'Completed' ? 'bg-purple-100 text-purple-800' :
-      course_status === 'Archived' ? 'bg-gray-100 text-gray-800' : 'bg-gray-100 text-gray-800'
+      course_status === 'Archived' ? 'bg-gray-200 text-gray-800' : 'bg-gray-100 text-gray-800'
     }`}>
       <div className={`w-2 h-2 rounded-full ${
         course_status === 'Ongoing' ? 'bg-green-400' :
