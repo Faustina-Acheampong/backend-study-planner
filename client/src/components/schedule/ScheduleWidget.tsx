@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import React from "react";
 import Link from 'next/link';
 import axios from "axios";
+import TasksWidget from "../tasks/TasksWidget";
+import TaskComponent from "./TaskComponent";
 
 
 const ScheduleWidget = () => {
@@ -74,8 +76,9 @@ const ScheduleWidget = () => {
             ) : (
               <p className="text-sm text-gray-500">No tasks for this day</p>
             )}
+             
           </div>
-
+          
           {/* Courses Section (static, for now) */}
           <div className="bg-white rounded-lg shadow-inner p-2 mb-4">
             <h4 className="text-sm font-bold mb-1">Courses</h4>
@@ -90,6 +93,7 @@ const ScheduleWidget = () => {
         </div>
       ))}
     </div>
+    <TaskComponent/>
   </div>
 );
 };
