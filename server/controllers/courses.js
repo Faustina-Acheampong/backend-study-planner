@@ -67,17 +67,51 @@ coursesRouter.post('/', validateRequiredFields(requiredFields), validateUserId, 
     }
 });
 
-// GET request to retrieve all courses
+// GET request to retrieve all courses with optional filters
 coursesRouter.get('/', async (req, res) => {
     try {
-        
-        const { include_archived = 'false' } = req.query;
+        console.log('Courses route HIT!');
+
+        const {
+            include_archived = 'false',
+            course_name,
+            course_day,
+            course_instructor,
+            course_semester,
+            course_code,
+            course_status
+        } = req.query;
 
         const filter = {};
+
+        // Include archived courses logic
         if (include_archived.toLowerCase() !== 'true') {
             filter.is_archived = false;
         }
 
+        // Add additional filters based on query parameters
+        if (course_name) {
+            filter.course_name = { $regex: course_name, $options: 'i' }; // Case-insensitive search
+        }
+        if (course_day) {
+            filter.course_day = course_day;
+        }
+        if (course_instructor) {
+            filter.course_instructor = { $regex: course_instructor, $options: 'i' };
+        }
+        if (course_semester) {
+            filter.course_semester = course_semester;
+        }
+        if (course_code) {
+            filter.course_code = { $regex: course_code, $options: 'i' };
+        }
+        if (course_status) {
+            filter.course_status = { $regex: course_status, $options: 'i' };
+        }
+
+        console.log('Constructed filter:', filter);
+
+        // Fetch courses and archived count
         const [courses, archivedCount] = await Promise.all([
             Course.find(filter).sort({ createdAt: -1 }),
             Course.countDocuments({ is_archived: true })
@@ -89,7 +123,7 @@ coursesRouter.get('/', async (req, res) => {
                 count: 0,
                 archivedCount,
                 data: [],
-                message: 'No courses found. Please add a course.' 
+                message: 'No courses found matching the filters.',
             });
         }
 
@@ -97,17 +131,19 @@ coursesRouter.get('/', async (req, res) => {
             success: true,
             count: courses.length,
             archivedCount,
-            data: courses
+            data: courses,
         });
+
     } catch (error) {
         console.error('Error retrieving courses:', error);
         res.status(500).json({
             success: false,
             error: 'Error retrieving courses. Please try again.',
-            details: error.message
-         });         
+            details: error.message,
+        });
     }
 });
+
 
 // GET request to retrieve a single course by ID
 coursesRouter.get('/:id', async (req, res) => {
@@ -140,72 +176,6 @@ coursesRouter.get('/:id', async (req, res) => {
     }
 });
 
-// GET request to retrieve all courses by optional filters
-coursesRouter.get('/', async (req, res) => {
-    try {
-        // Extract filter parameters from query string
-        const {
-            course_name,
-            course_day,
-            course_instructor,
-            course_semester,
-            course_code,
-            course_status
-          } = req.query;
-
-        // Create an empty filter object to store the filters
-        const filter = {};
-        
-        // Add filters only if they exist in query params
-
-       if (course_name) {
-        filter.course_name = { $regex: course_name, $options: 'i' }; // Case-insensitive search
-       }
-       if (course_day) {
-        filter.course_day = course_day;
-       }
-       if (course_instructor) {
-        filter.course_instructor = { $regex: course_instructor, $options: 'i' };
-       }
-       if (course_semester) {
-        filter.course_semester = course_semester;
-       }
-       if (course_code) {
-        filter.course_code = { $regex: course_code, $options: 'i' };
-       }
-       if (course_status) {
-        filter.course_status = course_status;
-       }
-
-        const courses = await Course.find(filter).sort({ createdAt: -1 }); // Sort newest first
-
-        // Check if any courses are found
-        if (courses.length === 0) {
-            return res.status(200).json({
-                success: true,
-                data: [],
-                message: 'No courses found matching the filters.',
-            });
-        }
-
-        // Return the filtered courses
-        res.status(200).json({
-            success: true,
-            count: courses.length,
-            data: courses,
-        });
-
-    } catch (error) {
-        console.error('Error retrieving courses:', error);
-
-        // Handle server and other errors
-        res.status(500).json({
-            success: false,
-            error: 'Error retrieving courses. Please try again.',
-            details: error.message,
-        });
-    }
-});
 
 // PUT request to update a course by ID
 coursesRouter.put('/:id', async (req, res) => {
