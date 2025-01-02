@@ -17,15 +17,15 @@ const validateRequiredFields = (requiredFields) => (req, res, next) => {
   next();
 };
 
-// Middleware to validate the userId for  task 
+// Middleware to validate the userId for task
 const validateUserId = async (req, res, next) => {
-  const { userId } = req.body;
+  const { user_id } = req.body;
 
-  if (!mongoose.Types.ObjectId.isValid(userId)) {
-    return res.status(400).json({ message: "Invalid userId" });
+  if (!mongoose.Types.ObjectId.isValid(user_id)) {
+    return res.status(400).json({ message: "Invalid user_id" });
   }
 
-  const userExists = await User.findById(userId);
+  const userExists = await User.findById(user_id);
   if (!userExists) {
     return res.status(400).json({ message: "User not found" });
   }
@@ -38,7 +38,7 @@ const validateUserId = async (req, res, next) => {
 // Retrieve all tasks on GET request
 tasksRouter.get("/", async (req, res) => {
   try {
-    const tasks = await Task.find().populate("userId");
+    const tasks = await Task.find().populate("user_id"); // Populate user_id
     res.json(tasks);
   } catch (error) {
     console.error("Error fetching tasks:", error);
@@ -46,31 +46,31 @@ tasksRouter.get("/", async (req, res) => {
   }
 });
 
-//  route Create a new task from the request body
+// Route to Create a new task from the request body
 tasksRouter.post(
   "/",
-  validateRequiredFields(["taskTitle", "userId", "taskDueDate"]),
+  validateRequiredFields(["task_title", "user_id", "task_due_date"]),
   validateUserId,
   async (req, res) => {
     try {
       const {
-        taskTitle,
-        taskDescription,
-        taskPriority,
-        taskDueDate,
-        isTaskCompleted,
-        userId,
-        assignmentId,
+        task_title,
+        task_description,
+        task_priority,
+        task_due_date,
+        is_task_completed,
+        user_id,
+        assignment_id,
       } = req.body;
 
       const newTask = new Task({
-        taskTitle,
-        taskDescription,
-        taskPriority,
-        taskDueDate,
-        isTaskCompleted: isTaskCompleted || false,
-        userId,
-        assignmentId,
+        task_title,
+        task_description,
+        task_priority,
+        task_due_date,
+        is_task_completed: is_task_completed || false,
+        user_id,
+        assignment_id,
       });
 
       await newTask.save();
@@ -84,10 +84,10 @@ tasksRouter.post(
   }
 );
 
-// 3.  route to Update a task
+// Route to Update a task
 tasksRouter.put(
   "/:id",
-  validateRequiredFields(["taskTitle", "userId"]),
+  validateRequiredFields(["task_title", "user_id"]),
   validateUserId,
   async (req, res) => {
     try {
@@ -109,7 +109,7 @@ tasksRouter.put(
   }
 );
 
-// 4. route to Delete a task
+// Route to Delete a task
 tasksRouter.delete("/:id", async (req, res) => {
   try {
     const deletedTask = await Task.findByIdAndDelete(req.params.id);
@@ -125,7 +125,7 @@ tasksRouter.delete("/:id", async (req, res) => {
   }
 });
 
-//  route for Toggle task completion status
+// Route for Toggle task completion status (Now directly using `is_task_completed` field)
 tasksRouter.patch("/:id/toggle-completed", async (req, res) => {
   try {
     const { id } = req.params; // Extract `id` from `req.params`
@@ -140,10 +140,10 @@ tasksRouter.patch("/:id/toggle-completed", async (req, res) => {
       return res.status(404).json({ message: "Task not found" });
     }
 
-    task.isTaskCompleted = !task.isTaskCompleted;
-    task.taskStatus = task.isTaskCompleted ? "completed" : "pending";
+    // Toggle the completion status directly
+    task.is_task_completed = !task.is_task_completed;
 
-    await task.save({ validateModifiedOnly: true }); // Validate only modified fields
+    await task.save({ validateModifiedOnly: true }); // Save only modified fields
 
     res.json(task);
   } catch (error) {
@@ -167,8 +167,8 @@ tasksRouter.get("/tasks-by-date", async (req, res) => {
     endOfDay.setHours(23, 59, 59, 999);
 
     const tasks = await Task.find({
-      taskDueDate: { $gte: startOfDay, $lte: endOfDay },
-    }); // Find tasks with deadlines on the selected day
+      task_due_date: { $gte: startOfDay, $lte: endOfDay },
+    });
 
     res.json(tasks);
   } catch (error) {
@@ -182,6 +182,9 @@ tasksRouter.get("/tasks-by-date", async (req, res) => {
       });
   }
 });
+
+
+
 
 // tasksRouter.post("/", (req, res) => {});
 
