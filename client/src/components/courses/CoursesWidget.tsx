@@ -1,5 +1,6 @@
 'use client'
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Plus} from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/shared/Button';
 import { 
@@ -11,6 +12,7 @@ import {
 import type { CourseType } from '@/types/course';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import CourseCard from './CourseCard';
+import CreateCourseModal from './CreateCourseModal';
 
 const CoursesWidget = () => {
     const dispatch = useAppDispatch();
@@ -19,6 +21,8 @@ const CoursesWidget = () => {
     const courses = useAppSelector(selectCourses);
     const loading = useAppSelector(selectLoading);
     const error = useAppSelector(selectError);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
 
     useEffect(() => {
         dispatch(fetchCourses({ include_archived: false }));
@@ -59,11 +63,25 @@ const CoursesWidget = () => {
                 {/* Header */}
                 <div className="flex justify-between items-center">
                     <h3 className="text-lg font-semibold">Courses</h3>
-                    <Button
-                        type="outline"
-                        label="Show All"
-                        onClick={handleShowAll}
-                    />
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() => setIsCreateModalOpen(true)}
+                            className="flex items-center px-4 py-2 text-white rounded-lg font-medium focus:outline-none focus:ring-2 focus:ring-offset-2"
+                            style={{
+                                backgroundColor: '#4E46B4',
+                            }}
+                            onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#463FA2')}
+                            onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#4E46B4')}
+                        >
+                            <Plus className="h-4 w-4 mr-2" />
+                            Add Course
+                        </button>    
+                        <Button
+                            type="outline"
+                            label="Show All"
+                            onClick={handleShowAll}
+                        />
+                    </div>
                 </div>
 
                 {/* Course grid */}
@@ -81,6 +99,10 @@ const CoursesWidget = () => {
                     )}
                 </div>
             </div>
+            <CreateCourseModal
+                isOpen={isCreateModalOpen}
+                onClose={() => setIsCreateModalOpen(false)}
+            />
         </div>    
     );
 };
