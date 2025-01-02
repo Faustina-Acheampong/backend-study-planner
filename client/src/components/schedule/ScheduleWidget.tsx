@@ -66,9 +66,9 @@ const ScheduleWidget = () => {
                   key={task.id}
                   className="border-b last:border-0 py-1 text-left"
                 >
-                  <h3 className="font-semibold mb-2">{task.task_title}</h3>
-                  <p> {task.task_description || "No description provided."}</p>
-                  <h4 className="text-xs text-gray-600">{task.task_priority} Priority</h4>
+                  <h3 className="font-semibold mb-2 text-center"> Task = {task.task_title}</h3>
+                  <h5 className="text-center"> Description= {task.task_description || "No description provided."}</h5>
+                  <h4 className="text-sm text-center  text-gray-600">{task.task_priority} Priority</h4>
                 </div>
               ))
             ) : (
