@@ -4,7 +4,7 @@ import React from "react";
 import Link from 'next/link';
 import axios from "axios";
 import TasksWidget from "../tasks/TasksWidget";
-import TaskComponent from "./TaskComponent";
+ import TaskComponent from "./TaskComponent";
 
 
 const ScheduleWidget = () => {
@@ -93,7 +93,7 @@ const ScheduleWidget = () => {
         </div>
       ))}
     </div>
-    <TaskComponent/>
+     <TaskComponent/> 
   </div>
 );
 };
