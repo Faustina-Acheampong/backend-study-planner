@@ -84,30 +84,62 @@ tasksRouter.post(
   }
 );
 
+// // Route to Update a task
+// tasksRouter.put(
+//   "/:id",
+//   validateRequiredFields(["task_title", "user_id"]),
+//   validateUserId,
+//   async (req, res) => {
+//     try {
+//       const updatedTask = await Task.findByIdAndUpdate(
+//         req.params.id,
+//         req.body,
+//         { new: true, maxTimeMS: 5000 }
+//       );
+//       if (!updatedTask) {
+//         return res.status(404).json({ message: "Task not found" });
+//       }
+//       res.json(updatedTask);
+//     } catch (error) {
+//       console.error("Error updating task:", error);
+//       res
+//         .status(500)
+//         .json({ message: `Failed to update task: ${error.message || error}` });
+//     }
+//   }
+// );
 // Route to Update a task
 tasksRouter.put(
   "/:id",
   validateRequiredFields(["task_title", "user_id"]),
-  validateUserId,
   async (req, res) => {
     try {
+      const { user_id } = req.body;
+
+      // Ensure that user_id is a valid ObjectId (MongoDB format)
+      if (!mongoose.Types.ObjectId.isValid(user_id)) {
+        return res.status(400).json({ message: "Invalid user_id format" });
+      }
+
+      // Proceed with updating the task
       const updatedTask = await Task.findByIdAndUpdate(
         req.params.id,
         req.body,
         { new: true, maxTimeMS: 5000 }
       );
+      
       if (!updatedTask) {
         return res.status(404).json({ message: "Task not found" });
       }
+
       res.json(updatedTask);
     } catch (error) {
       console.error("Error updating task:", error);
-      res
-        .status(500)
-        .json({ message: `Failed to update task: ${error.message || error}` });
+      res.status(500).json({ message: "Failed to update task" });
     }
   }
 );
+
 
 // Route to Delete a task
 tasksRouter.delete("/:id", async (req, res) => {

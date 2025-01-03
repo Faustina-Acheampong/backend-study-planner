@@ -11,7 +11,7 @@ interface Task {
   is_task_completed: boolean;
   task_priority: "Low" | "Medium" | "High";
   task_status: "pending" | "completed";
-  user_id: string; 
+  user_id: string;
   assignment_id?: string | null;
   time?: string[];
 }
@@ -21,19 +21,19 @@ type FormData = {
   task_description: string;
   task_due_date: string;
   task_priority: "Low" | "Medium" | "High";
-  user_id: string; 
+  user_id: string;
   assignment_id?: string | null;
 };
 
 const TaskComponent = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [isAddModalOpen, setAddModalOpen] = useState(false);
+  const [isModalOpen, setModalOpen] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     task_title: "",
     task_description: "",
     task_due_date: "",
     task_priority: "Medium",
-    user_id: "675fe38b7a00a3f44db1269b", 
+    user_id: "675fe38b7a00a3f44db1269b",
   });
   const [isEditMode, setIsEditMode] = useState(false);
   const [editTaskId, setEditTaskId] = useState<string | null>(null);
@@ -47,17 +47,7 @@ const TaskComponent = () => {
       const response = await axios.get("http://localhost:8000/api/tasks/");
       setTasks(response.data);
     } catch (error) {
-      handleError("Error fetching tasks", error);
-    }
-  };
-
-  const handleError = (message: string, error: unknown) => {
-    if (error instanceof AxiosError) {
-      console.error(`${message}:`, error);
-      alert(`${message}: ${error.response?.data?.message || error.message}`);
-    } else {
-      console.error("Unexpected error:", error);
-      alert("An unexpected error occurred");
+      handleError(error, "Error fetching tasks");
     }
   };
 
@@ -65,9 +55,9 @@ const TaskComponent = () => {
     try {
       await axios.post("http://localhost:8000/api/tasks/", formData);
       fetchTasks();
-      setAddModalOpen(false);
+      closeModal();
     } catch (error) {
-      handleError("Error adding task", error);
+      handleError(error, "Error adding task");
     }
   };
 
@@ -76,58 +66,79 @@ const TaskComponent = () => {
     try {
       await axios.put(`http://localhost:8000/api/tasks/${editTaskId}`, formData);
       fetchTasks();
-      setAddModalOpen(false);
-      setIsEditMode(false);
-      setEditTaskId(null);
+      closeModal();
     } catch (error) {
-      handleError("Error editing task", error);
+      handleError(error, "Error editing task");
     }
   };
 
   const handleDeleteTask = async (taskId: string) => {
     try {
       await axios.delete(`http://localhost:8000/api/tasks/${taskId}`);
-      fetchTasks(); // Fetch the updated tasks list
+      fetchTasks();
     } catch (error) {
-      handleError("Error deleting task", error);
+      handleError(error, "Error deleting task");
     }
   };
 
-  const openEditModal = (task: Task) => {
-    setFormData({
-      task_title: task.task_title,
-      task_description: task.task_description,
-      task_due_date: task.task_due_date,
-      task_priority: task.task_priority,
-      user_id: task.user_id, 
-      assignment_id: task.assignment_id || null,
-    });
-    setEditTaskId(task.id);
-    setIsEditMode(true);
-    setAddModalOpen(true);
-  };
-
   const handleToggleCompleted = async (taskId: string) => {
-    const task = tasks.find((t) => t.id === taskId);
-    if (!task) return;
-
     try {
-      await axios.put(`http://localhost:8000/api/tasks/${taskId}`, {
-        ...task,
-        is_task_completed: !task.is_task_completed,
-      });
+      await axios.patch(`http://localhost:8000/api/tasks/${taskId}/toggle-completed`);
       fetchTasks();
     } catch (error) {
-      handleError("Error toggling task completion", error);
+      handleError(error, "Error toggling task completion");
+    }
+  };
+
+  const openModal = (task?: Task) => {
+    if (task) {
+      setFormData({
+        task_title: task.task_title,
+        task_description: task.task_description,
+        task_due_date: task.task_due_date,
+        task_priority: task.task_priority,
+        user_id: task.user_id,
+        assignment_id: task.assignment_id || null,
+      });
+      setEditTaskId(task.id);
+      setIsEditMode(true);
+    } else {
+      setFormData({
+        task_title: "",
+        task_description: "",
+        task_due_date: "",
+        task_priority: "Medium",
+        user_id: "675fe38b7a00a3f44db1269b",
+      });
+      setIsEditMode(false);
+      setEditTaskId(null);
+    }
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+    setIsEditMode(false);
+    setEditTaskId(null);
+  };
+
+  const handleError = (error: unknown, message: string) => {
+    if (error instanceof AxiosError) {
+      console.error(message, error);
+      alert(`${message}: ${error.response?.data?.message || error.message}`);
+    } else {
+      console.error("Unexpected error:", error);
+      alert("An unexpected error occurred");
     }
   };
 
   return (
+    <div  className="container">
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Tasks</h1>
       <div className="flex justify-between mb-4">
         <button
-          onClick={() => setAddModalOpen(true)}
+          onClick={() => openModal()}
           className="bg-blue-500 text-white px-4 py-2 rounded"
         >
           Add Task
@@ -154,7 +165,7 @@ const TaskComponent = () => {
             </p>
             <div className="mt-2 flex justify-between">
               <button
-                onClick={() => openEditModal(task)}
+                onClick={() => openModal(task)}
                 className="bg-yellow-500 text-white px-2 py-1 rounded"
               >
                 Edit
@@ -169,14 +180,10 @@ const TaskComponent = () => {
           </div>
         ))}
       </div>
-      {isAddModalOpen && (
+      {isModalOpen && (
         <Modal
           title={isEditMode ? "Edit Task" : "Add Task"}
-          onClose={() => {
-            setAddModalOpen(false);
-            setIsEditMode(false);
-            setEditTaskId(null);
-          }}
+          onClose={closeModal}
           onSave={isEditMode ? handleEditTask : handleAddTask}
           formData={formData}
           handleInputChange={(field, value) =>
@@ -184,6 +191,7 @@ const TaskComponent = () => {
           }
         />
       )}
+    </div>
     </div>
   );
 };
