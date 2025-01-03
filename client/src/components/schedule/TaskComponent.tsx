@@ -3,6 +3,7 @@ import axios from "axios";
 import Modal from "./Modal";
 import { AxiosError } from "axios";
 
+// Task and FormData interfaces
 interface Task {
   id: string;
   task_title: string;
@@ -42,6 +43,7 @@ const TaskComponent = () => {
     fetchTasks();
   }, []);
 
+  // Fetch tasks from API
   const fetchTasks = async () => {
     try {
       const response = await axios.get("http://localhost:8000/api/tasks/");
@@ -51,6 +53,7 @@ const TaskComponent = () => {
     }
   };
 
+  // Add task handler
   const handleAddTask = async () => {
     try {
       await axios.post("http://localhost:8000/api/tasks/", formData);
@@ -61,8 +64,9 @@ const TaskComponent = () => {
     }
   };
 
+  // Edit task handler
   const handleEditTask = async () => {
-    if (!editTaskId) return;
+    if (!editTaskId) return;  
     try {
       await axios.put(`http://localhost:8000/api/tasks/${editTaskId}`, formData);
       fetchTasks();
@@ -72,6 +76,7 @@ const TaskComponent = () => {
     }
   };
 
+  // Delete task handler
   const handleDeleteTask = async (taskId: string) => {
     try {
       await axios.delete(`http://localhost:8000/api/tasks/${taskId}`);
@@ -81,6 +86,7 @@ const TaskComponent = () => {
     }
   };
 
+  // Toggle completion status of a task
   const handleToggleCompleted = async (taskId: string) => {
     try {
       await axios.patch(`http://localhost:8000/api/tasks/${taskId}/toggle-completed`);
@@ -90,6 +96,7 @@ const TaskComponent = () => {
     }
   };
 
+  // Open modal for adding/editing tasks
   const openModal = (task?: Task) => {
     if (task) {
       setFormData({
@@ -116,12 +123,14 @@ const TaskComponent = () => {
     setModalOpen(true);
   };
 
+  // Close the modal
   const closeModal = () => {
     setModalOpen(false);
     setIsEditMode(false);
     setEditTaskId(null);
   };
 
+  // Handle errors globally
   const handleError = (error: unknown, message: string) => {
     if (error instanceof AxiosError) {
       console.error(message, error);
@@ -133,65 +142,62 @@ const TaskComponent = () => {
   };
 
   return (
-    <div  className="container">
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Tasks</h1>
-      <div className="flex justify-between mb-4">
-        <button
-          onClick={() => openModal()}
-          className="bg-blue-500 text-white px-4 py-2 rounded"
-        >
-          Add Task
-        </button>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {tasks.map((task) => (
-          <div
-            key={task.id}
-            className="flex flex-col p-4 border rounded shadow-sm bg-white"
+    <div className="container">
+      <div className="container mx-auto p-4">
+        <h1 className="text-2xl font-bold mb-4">Tasks</h1>
+        <div className="flex justify-between mb-4">
+          <button
+            onClick={() => openModal()}
+            className="bg-blue-500 text-white px-4 py-2 rounded"
           >
-            <div className="flex items-center justify-between mb-2">
-              <input
-                type="checkbox"
-                checked={task.is_task_completed}
-                onChange={() => handleToggleCompleted(task.id)}
-                className="mr-2"
-              />
-              <span className="font-semibold">{task.task_title}</span>
+            Add Task
+          </button>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {tasks.map((task) => (
+            <div key={task.id} className="flex flex-col p-4 border rounded shadow-sm bg-white">
+              <div className="flex items-center justify-between mb-2">
+                <input
+                  type="checkbox"
+                  checked={task.is_task_completed}
+                  onChange={() => handleToggleCompleted(task.id)}
+                  className="mr-2"
+                />
+                <span className="font-semibold">{task.task_title}</span>
+              </div>
+              <p className="text-sm text-gray-600">{task.task_description}</p>
+              <p className="text-sm text-gray-600">
+                Priority: <strong>{task.task_priority}</strong>
+              </p>
+              <div className="mt-2 flex justify-between">
+                <button
+                  onClick={() => openModal(task)}
+                  className="bg-yellow-500 text-white px-2 py-1 rounded"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDeleteTask(task.id)}
+                  className="bg-red-500 text-white px-2 py-1 rounded"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
-            <p className="text-sm text-gray-600">{task.task_description}</p>
-            <p className="text-sm text-gray-600">
-              Priority: <strong>{task.task_priority}</strong>
-            </p>
-            <div className="mt-2 flex justify-between">
-              <button
-                onClick={() => openModal(task)}
-                className="bg-yellow-500 text-white px-2 py-1 rounded"
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => handleDeleteTask(task.id)}
-                className="bg-red-500 text-white px-2 py-1 rounded"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
+        {isModalOpen && (
+          <Modal
+            title={isEditMode ? "Edit Task" : "Add Task"}
+            onClose={closeModal}
+            onSave={isEditMode ? handleEditTask : handleAddTask}
+            formData={formData}
+            handleInputChange={(field, value) =>
+              setFormData((prev) => ({ ...prev, [field]: value }))
+            }
+          />
+        )}
       </div>
-      {isModalOpen && (
-        <Modal
-          title={isEditMode ? "Edit Task" : "Add Task"}
-          onClose={closeModal}
-          onSave={isEditMode ? handleEditTask : handleAddTask}
-          formData={formData}
-          handleInputChange={(field, value) =>
-            setFormData((prev) => ({ ...prev, [field]: value }))
-          }
-        />
-      )}
-    </div>
     </div>
   );
 };
