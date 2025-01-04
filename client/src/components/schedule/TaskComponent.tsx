@@ -65,17 +65,37 @@ const TaskComponent = () => {
   };
 
   // Edit task handler
+  // const handleEditTask = async () => {
+  //   if (!editTaskId) return;  
+  //   try {
+  //     await axios.put(`http://localhost:8000/api/tasks/${editTaskId}`, formData);
+  //     fetchTasks();
+  //     closeModal();
+  //   } catch (error) {
+  //     handleError(error, "Error editing task");
+  //   }
+  // };
   const handleEditTask = async () => {
-    if (!editTaskId) return;  
+    if (!editTaskId) return;
+  
+    // Ensure user_id is just the ObjectId string (_id)
+    const cleanedData = {
+      ...formData,
+      user_id: formData.user_id ? formData.user_id : formData.user_id,  // Only pass the ObjectId (_id)
+    };
+  
+    console.log("Cleaned Form Data:", cleanedData);  // Log cleaned data for debugging
+  
     try {
-      await axios.put(`http://localhost:8000/api/tasks/${editTaskId}`, formData);
-      fetchTasks();
-      closeModal();
+      const response = await axios.put(`http://localhost:8000/api/tasks/${editTaskId}`, cleanedData);
+      console.log("Task updated:", response.data);  // Log response to confirm success
+      fetchTasks(); // Optionally refresh task list
+      closeModal(); // Close modal after task update
     } catch (error) {
+      console.error("Error editing task:", error);  // Log error for debugging
       handleError(error, "Error editing task");
     }
   };
-
   // Delete task handler
   const handleDeleteTask = async (taskId: string) => {
     try {
@@ -144,41 +164,50 @@ const TaskComponent = () => {
   return (
     <div className="container">
       <div className="container mx-auto p-4">
-        <h1 className="text-2xl font-bold mb-4">Tasks</h1>
+        <h1 className="text-2xl font-bold mb-4">Tasks (To Do)</h1>
         <div className="flex justify-between mb-4">
-          <button
+        <input
+          type="text"
+          placeholder="Search"
+          className="border text-black rounded p-2 w-1/3"
+        />
+        <button className="border  rounded px-4 py-2">Sort by:</button>
+        <button
             onClick={() => openModal()}
-            className="bg-blue-500 text-white px-4 py-2 rounded"
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
           >
             Add Task
           </button>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      </div>
+        
+       
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {tasks.map((task) => (
-            <div key={task.id} className="flex flex-col p-4 border rounded shadow-sm bg-white">
-              <div className="flex items-center justify-between mb-2">
+            <div key={task.id} className="flex flex-col p-4 border  text-center bg-gray-300 hover:bg-gray-400 text-gray-900 transition my-4 font-semibold rounded-lg shadow-inner">
+              <div className="flex items-center justify-between mb-2 bg-white rounded-lg shadow-inner p-2 ">
+              <span className="font-semibold bg-white rounded-lg shadow-inner p-2 mb-4 ">{task.task_title}</span>
                 <input
                   type="checkbox"
                   checked={task.is_task_completed}
                   onChange={() => handleToggleCompleted(task.id)}
                   className="mr-2"
                 />
-                <span className="font-semibold">{task.task_title}</span>
+        
               </div>
-              <p className="text-sm text-gray-600">{task.task_description}</p>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 bg-white rounded-lg shadow-inner p-2 mb-4">{task.task_description}</p>
+              <p className="text-sm text-gray-600 bg-white rounded-lg shadow-inner p-2 mb-4">
                 Priority: <strong>{task.task_priority}</strong>
               </p>
               <div className="mt-2 flex justify-between">
                 <button
                   onClick={() => openModal(task)}
-                  className="bg-yellow-500 text-white px-2 py-1 rounded"
+                  className="bg-yellow-500 text-white px-3 py-2 rounded-lg shadow-inner  hover:bg-yellow-600"
                 >
                   Edit
                 </button>
                 <button
                   onClick={() => handleDeleteTask(task.id)}
-                  className="bg-red-500 text-white px-2 py-1 rounded"
+                  className="bg-red-500 text-white px-3 py-2 rounded-lg shadow-inner  hover:bg-red-600"
                 >
                   Delete
                 </button>

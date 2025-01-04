@@ -52,7 +52,7 @@ const ScheduleWidget = () => {
         Show All
       </button>
     </div>
-    <div className="grid grid-cols-5 gap-4">
+    <div className=" gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5">
       {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].map((day) => (
         <div
           key={day}
