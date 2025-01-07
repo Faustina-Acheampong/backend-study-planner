@@ -1,6 +1,8 @@
 import { createAppSlice } from "../createAppSlice";
 import { CourseType } from '@/types/course';
 import { ActionCreatorWithPayload, AsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+import { RootState } from "../store";
 
 interface CourseFilters {
   include_archived?: boolean;

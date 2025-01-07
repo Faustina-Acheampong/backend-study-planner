@@ -85,9 +85,9 @@ export default function CoursePage() {
     if (!course) return null;
 
     return (
-        <div className="w-full bg-white rounded-lg overflow-hidden">
+        <div className="w-full bg-white rounded-[19px] border-gray-400 overflow-hidden">
             {/* Header with action buttons */}
-            <div className="bg-gray-800 h-40 w-full relative">
+            <div className="bg-greyDark h-40 w-full relative">
                 <div className="absolute top-4 right-4 flex gap-2">
                     <button 
                         onClick={() => setIsEditModalOpen(true)}
@@ -117,7 +117,7 @@ export default function CoursePage() {
             <div className="p-6">
                 {/* Course title and status */}
                 <div className="flex justify-between items-start mb-8">
-                    <h1 className="text-lg font-bold">
+                    <h1 className="text-lg text-black font-bold">
                         {course.course_name}
                     </h1>
                     <CourseStatus course_status={course.course_status} />
@@ -144,7 +144,7 @@ export default function CoursePage() {
                 {course.course_description && (
                     <div className="mt-8 w-full md:w-1/3">
                         <h2 className="text-lg font-semibold mb-2">Description</h2>
-                        <p className="bg-white rounded-lg shadow-sm border border-gray-100 text-black p-4">
+                        <p className="bg-whiteForced rounded-lg shadow-sm border border-gray-100 text-black p-4">
                             {course.course_description}
                         </p>
                     </div>

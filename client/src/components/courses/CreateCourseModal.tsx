@@ -1,40 +1,40 @@
 'use client'
 import React, { useState, useEffect } from 'react';
-import { CourseType, Days, Status } from '@/types/course';
-import { Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useAppDispatch } from '@/store/hooks';
+import { AlertCircle, Loader2, Plus } from 'lucide-react';
+import { createCourse } from '@/store/course/courseSlice';
+import { Days, Status } from '@/types/course';
+import { CreateCourseFormData } from '@/types/form';
 
-interface CourseEditModalProps {
-    course: CourseType;
+interface CreateCourseModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSubmit: (data: Partial<CourseType>) => Promise<void>;
 }
 
 const days: Days[] = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-const statuses: Status[] = ['Ongoing', 'Upcoming', 'Completed', 'Archived'];
+const statuses: Status[] = ['Ongoing', 'Upcoming', 'Completed'];
 
-export default function CourseEditModal({ 
-    course, 
-    isOpen, 
-    onClose,
-    onSubmit 
-}: CourseEditModalProps) {
+export default function CreateCourseModal({ isOpen, onClose }: CreateCourseModalProps) {
+    const dispatch = useAppDispatch();
+    const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [isAnimating, setIsAnimating] = useState(false);
-    const [formData, setFormData] = useState({
-        course_name: course.course_name,
-        course_day: course.course_day,
-        course_code: course.course_code,
-        course_instructor: course.course_instructor,
-        course_semester: course.course_semester || '',
-        course_location: course.course_location || '',
-        course_description: course.course_description || '',
+    const [formData, setFormData] = useState<CreateCourseFormData>({
+        course_name: '',
+        course_day: 'Monday' as Days,
+        course_code: '',
+        course_instructor: '',
+        course_semester: '',
+        course_location: '',
+        course_description: '',
         course_time: {
-            start: course.course_time.start,
-            end: course.course_time.end
+            start: '',
+            end: ''
         },
-        course_status: course.course_status
+        course_status: 'Ongoing' as Status,
+        user_id: '' // Replace with authenticated user ID
     });
 
     useEffect(() => {
@@ -45,31 +45,81 @@ export default function CourseEditModal({
 
     const handleClose = () => {
         setIsAnimating(false);
-        setTimeout(onClose, 200); 
+        setTimeout(() => {
+            onClose();
+            setFormData({
+                course_name: '',
+                course_day: 'Monday',
+                course_code: '',
+                course_instructor: '',
+                course_semester: '',
+                course_location: '',
+                course_description: '',
+                course_time: {
+                    start: '',
+                    end: ''
+                },
+                course_status: 'Ongoing',
+                user_id: ''
+            });
+            setError(null);
+        }, 200);
+    };
+
+    const validateForm = () => {
+        if (!/^[A-Z]{2}[0-9]{4}$/.test(formData.course_code)) {
+            setError('Course code must be in the format: AB1234');
+            return false;
+        }
+    
+        if (formData.course_semester && 
+            !/^(Autumn|Winter|Spring|Summer)-([1-9]|10)$/.test(formData.course_semester)) {
+            setError('Semester must be in the format: Autumn-1');
+            return false;
+        }
+
+        const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
+        if (!timeRegex.test(formData.course_time.start) || 
+            !timeRegex.test(formData.course_time.end)) {
+            setError('Time must be in 24-hour format (HH:MM)');
+            return false;
+        }
+
+        return true;
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setIsSubmitting(true);
         setError(null);
 
+        if (!validateForm()) {
+            return;
+        }
+        
+        setIsSubmitting(true);
+     
         try {
-            await onSubmit(formData);
+            await dispatch(createCourse(formData)).unwrap();
+            router.refresh();
             handleClose();
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'Failed to update course');
+            setError(err instanceof Error ? err.message : 'Failed to create course');
         } finally {
             setIsSubmitting(false);
         }
     };
-
+    
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-        // Only trim if it's not the description field
-        if (name !== 'course_description' && typeof value === 'string') {
+
+        if (name.startsWith('course_time.')) {
+            const timeField = name.split('.')[1];
             setFormData(prev => ({
                 ...prev,
-                [name]: value.trim()
+                course_time: {
+                    ...prev.course_time,
+                    [timeField]: value
+                }
             }));
         } else {
             setFormData(prev => ({
@@ -102,11 +152,12 @@ export default function CourseEditModal({
                                 : 'opacity-0 scale-95'
                         }`}
                     >
-                        <h2 className="text-xl font-semibold mb-4">Edit Course</h2>
+                        <h2 className="text-xl font-semibold mb-4">Add New Course</h2>
 
                         {error && (
-                            <div className="mb-4 p-4 text-red-600 bg-red-50 rounded-lg">
-                                {error}
+                            <div className="mb-4 p-4 text-red-600 bg-red-50 rounded-lg flex gap-2 items-start">
+                                <AlertCircle className="h-5 w-5" />
+                                <p>{error}</p>
                             </div>
                         )}
 
@@ -124,16 +175,12 @@ export default function CourseEditModal({
                                         className="w-full p-2 border rounded-lg"
                                         required
                                         maxLength={250}
-                                        placeholder="Enter course location"
-                                        onBlur={(e) => {
-                                            e.target.value = e.target.value.trim();
-                                        }}
                                     />
                                 </div>
 
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Course Code
+                                        Course Code (e.g., AB1234)
                                     </label>
                                     <input
                                         type="text"
@@ -143,6 +190,7 @@ export default function CourseEditModal({
                                         className="w-full p-2 border rounded-lg"
                                         required
                                         pattern="[A-Z]{2}[0-9]{4}"
+                                        placeholder="AB1234"
                                     />
                                 </div>
 
@@ -182,7 +230,7 @@ export default function CourseEditModal({
 
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Start Time
+                                        Start Time (HH:MM)
                                     </label>
                                     <input
                                         type="time"
@@ -196,7 +244,7 @@ export default function CourseEditModal({
 
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        End Time
+                                        End Time (HH:MM)
                                     </label>
                                     <input
                                         type="time"
@@ -225,7 +273,7 @@ export default function CourseEditModal({
 
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Semester
+                                        Semester (e.g., Autumn-1)
                                     </label>
                                     <input
                                         type="text"
@@ -233,6 +281,7 @@ export default function CourseEditModal({
                                         value={formData.course_semester}
                                         onChange={handleChange}
                                         className="w-full p-2 border rounded-lg"
+                                        placeholder="Season-Number"
                                         pattern="(Autumn|Winter|Spring|Summer)-([1-9]|10)"
                                     />
                                 </div>
@@ -240,7 +289,6 @@ export default function CourseEditModal({
                                 <div className="md:col-span-2">
                                     <label className="block text-sm font-medium text-gray-700 mb-1">
                                         Location
-                                        <span className="text-xs text-gray-500 ml-1">(250 characters max)</span>
                                     </label>
                                     <input
                                         type="text"
@@ -249,10 +297,6 @@ export default function CourseEditModal({
                                         onChange={handleChange}
                                         className="w-full p-2 border rounded-lg"
                                         maxLength={250}
-                                        placeholder="Enter course location"
-                                        onBlur={(e) => {
-                                            e.target.value = e.target.value.trim();
-                                        }}
                                     />
                                 </div>
 
@@ -264,13 +308,6 @@ export default function CourseEditModal({
                                         name="course_description"
                                         value={formData.course_description}
                                         onChange={handleChange}
-                                        onBlur={(e) => {
-                                            const trimmedValue = e.target.value.trim();
-                                            setFormData(prev => ({
-                                                ...prev,
-                                                course_description: trimmedValue
-                                            }));
-                                        }}
                                         className="w-full p-2 border rounded-lg"
                                         rows={4}
                                     />
@@ -289,15 +326,15 @@ export default function CourseEditModal({
                                 <button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="inline-flex justify-center rounded-lg text-sm font-semibold py-2.5 px-4 bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
+                                    className="inline-flex justify-center rounded-lg text-sm font-semibold py-2.5 px-4 bg-purple-600 text-white hover:bg-purple-700 disabled:opacity-50"
                                 >
                                     {isSubmitting ? (
                                         <>
                                             <Loader2 className="animate-spin -ml-1 mr-2 h-5 w-5" />
-                                            Saving...
+                                            Creating...
                                         </>
                                     ) : (
-                                        'Save Changes'
+                                        'Create Course'
                                     )}
                                 </button>
                             </div>
