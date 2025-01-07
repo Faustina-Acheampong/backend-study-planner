@@ -21,7 +21,7 @@ const Modal: React.FC<ModalProps> = ({
   const formatDate = (date: string | null) => {
     if (date) {
       const parsedDate = new Date(date);
-      return parsedDate.toISOString().split('T')[0]; // Extract 'yyyy-mm-dd'
+      return parsedDate.toISOString().split('T')[0]; 
     }
     return "";
   };

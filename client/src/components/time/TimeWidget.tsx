@@ -68,7 +68,7 @@ const TimeWidget = () => {
           {formateTime(time)}
         </span>
         {/* Buttons Section */}
-        <div className="flex space-x-4">
+        <div className="flex space-x-4 flex-col sm:flex-row">
           {/* Start Button */}
           <button
             onClick={startTime}
