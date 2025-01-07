@@ -6,7 +6,7 @@ import { MONGODB_URL } from './utils/config.js';
 import { authRouter } from './controllers/auth/auth.js';
 import { usersRouter } from './controllers/users.js';
 import { assignmentsRouter } from './controllers/assignments.js';
-import { coursesRouter } from './controllers/courses.js';
+import { coursesRouter } from './controllers/courses/courseRoutes.js';
 import { notesRouter } from './controllers/notes.js';
 import { tasksRouter } from './controllers/tasks.js';
 import { timesRouter } from './controllers/times.js';
