@@ -1,32 +1,33 @@
 "use client";
-import axios from "axios";
-import { Plus, Search } from "lucide-react";
-import { useParams } from "next/navigation";
+
 import { useEffect, useState } from "react";
+import { Plus, Search } from "lucide-react";
+import axios from "axios";
 
 interface Task {
   id: number;
   title: string;
   dueDate: string;
   status: "IN PROGRESS" | "NOT STARTED" | "FINISHED";
-  course_id: number;
 }
 
 export default function AssignmentPage() {
-  const params = useParams<{ id: string }>();
-  const id = params.id;
-
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [assignments, setAssignments] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showAll, setShowAll] = useState(false);
+
+  const handleShowMoreClick = () => {
+    setShowAll(!showAll);
+  };
 
   useEffect(() => {
-    const fetchTasks = async () => {
+    const fetchAssignments = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/assignments/?${course_id}`
+          "http://localhost:8000/api/assignments/"
         );
-        setTasks(response.data);
+        setAssignments(response.data);
         console.log("data", response.data);
 
         setLoading(false);
@@ -37,7 +38,7 @@ export default function AssignmentPage() {
       }
     };
 
-    fetchTasks();
+    fetchAssignments();
   }, []);
 
   if (loading) {
@@ -49,10 +50,7 @@ export default function AssignmentPage() {
   }
 
   return (
-    <div className="container">
-      Single Assignment Page
-      {/* page with all details about one assignment */}
-      {/* fetch data by id from url */}
+    <div className="rounded-lg border p-6">
       <div className="mb-6 flex items-center justify-between">
         <h3 className="text-lg font-semibold text-gray-900">Tasks</h3>
         <div className="flex items-center space-x-4">
@@ -70,36 +68,50 @@ export default function AssignmentPage() {
           </button>
         </div>
       </div>
+
       <input
         type="text"
         placeholder="Add a new task"
         className="rounded-md border pl-9 pr-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
       />
       <div className="divide-y">
-        {tasks.map((task) => (
-          <div key={task.id} className="flex items-center justify-between py-4">
+        {(showAll ? assignments : assignments.slice(0, 3)).map((assignment) => (
+          <div
+            key={assignment.id}
+            className="flex items-center justify-between py-4"
+          >
             <div className="flex items-center space-x-3">
               <input type="checkbox" className="rounded border-gray-300" />
 
-              <span className="font-medium text-gray-900">{task.title}</span>
+              <span className="font-medium text-gray-900">
+                {assignment.title}
+              </span>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-500">{task.dueDate}</span>
+              <span className="text-sm text-gray-500">
+                {assignment.dueDate}
+              </span>
               <span
                 className={`rounded-full px-3 py-1 text-xs font-medium ${
-                  task.status === "IN PROGRESS"
+                  assignment.status === "IN PROGRESS"
                     ? "bg-yellow-100 text-yellow-800"
-                    : task.status === "NOT STARTED"
+                    : assignment.status === "NOT STARTED"
                     ? "bg-red-100 text-red-800"
                     : "bg-green-100 text-green-800"
                 }`}
               >
-                {task.status}
+                {assignment.status}
               </span>
             </div>
           </div>
         ))}
       </div>
+      <button
+        className="mt-4 rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+        onClick={handleShowMoreClick}
+      >
+        {showAll ? "Show Less" : "Show More"}
+      </button>
     </div>
   );
 }
