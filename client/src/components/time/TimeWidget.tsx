@@ -57,6 +57,7 @@ const TimeWidget = () => {
   return (
     <div>
       {/* TimeWidget */}
+      
       <h2 className=" text-gray-900  transition my-4 text-center font-semibold font-sans">
         Timer
       </h2>
