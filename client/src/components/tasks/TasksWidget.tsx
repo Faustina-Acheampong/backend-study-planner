@@ -9,27 +9,26 @@ interface Task {
 }
 const TasksWidget = () => {
     const [tasks, setTasks] = useState<Task[]>([]);
-    const [loading, setLoading] = useState<boolean>(true); // To show loading state
-    const [error, setError] = useState<string>(''); // For handling errors
-  
+    const [loading, setLoading] = useState<boolean>(true); 
+    const [error, setError] = useState<string>(''); 
     useEffect(() => {
       const fetchTasks = async () => {
-        const todayFormatted = new Date().toISOString().split("T")[0]; // Format today's date
+        const todayFormatted = new Date().toISOString().split("T")[0]; 
   
         try {
           const response = await axios.get('http://localhost:8000/api/tasks/tasks-by-date', {
-            params: { date: todayFormatted }, // Pass today's date to your API if needed
+            params: { date: todayFormatted }, 
           });
-          setTasks(response.data); // Set tasks fetched from the API
+          setTasks(response.data); 
         } catch (err) {
-          setError('Failed to load tasks'); // Handle error
+          setError('Failed to load tasks'); 
           console.error('Error fetching tasks:', err);
         } finally {
-          setLoading(false); // Stop loading once the API call is done
+          setLoading(false); 
         }
       };
   
-      fetchTasks(); // Fetch tasks when the component mounts
+      fetchTasks(); 
     }, []);
   
     return (
@@ -42,7 +41,7 @@ const TasksWidget = () => {
             {loading ? (
               <p>Loading tasks...</p>
             ) : error ? (
-              <p className="text-red-500">{error}</p> // Show error message if fetching fails
+              <p className="text-red-500">{error}</p> 
             ) : tasks.length > 0 ? (
               tasks.map((task) => (
                 <div key={task.id} className="my-2">
