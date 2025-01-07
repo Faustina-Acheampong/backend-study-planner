@@ -84,30 +84,72 @@ tasksRouter.post(
   }
 );
 
+// // Route to Update a task
+// tasksRouter.put(
+//   "/:id",
+//   validateRequiredFields(["task_title", "user_id"]),
+//   validateUserId,
+//   async (req, res) => {
+//     try {
+//       const updatedTask = await Task.findByIdAndUpdate(
+//         req.params.id,
+//         req.body,
+//         { new: true, maxTimeMS: 5000 }
+//       );
+//       if (!updatedTask) {
+//         return res.status(404).json({ message: "Task not found" });
+//       }
+//       res.json(updatedTask);
+//     } catch (error) {
+//       console.error("Error updating task:", error);
+//       res
+//         .status(500)
+//         .json({ message: `Failed to update task: ${error.message || error}` });
+//     }
+//   }
+// );
 // Route to Update a task
 tasksRouter.put(
   "/:id",
   validateRequiredFields(["task_title", "user_id"]),
-  validateUserId,
   async (req, res) => {
+    console.log("Request Body:", req.body);  
+    
     try {
+      const { task_title, task_description, task_due_date, task_priority, user_id, assignment_id } = req.body;
+
+      // Validate user_id is a valid ObjectId (MongoDB format)
+      if (!mongoose.Types.ObjectId.isValid(user_id)) {
+        return res.status(400).json({ message: "Invalid user_id format" });
+      }
+
+      // Proceed with updating the task
       const updatedTask = await Task.findByIdAndUpdate(
-        req.params.id,
-        req.body,
-        { new: true, maxTimeMS: 5000 }
+        req.params.id,  
+        {
+          task_title,
+          task_description,
+          task_due_date,
+          task_priority,
+          user_id, // Use the validated user_id
+          assignment_id
+        },
+        { new: true, maxTimeMS: 5000 } 
       );
+
       if (!updatedTask) {
         return res.status(404).json({ message: "Task not found" });
       }
-      res.json(updatedTask);
+
+      res.json(updatedTask);  
+
     } catch (error) {
-      console.error("Error updating task:", error);
-      res
-        .status(500)
-        .json({ message: `Failed to update task: ${error.message || error}` });
+      console.error("Error updating task:", error);  
+      res.status(500).json({ message: "Failed to update task", error: error.message });
     }
   }
 );
+
 
 // Route to Delete a task
 tasksRouter.delete("/:id", async (req, res) => {
