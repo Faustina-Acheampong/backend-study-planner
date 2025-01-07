@@ -6,6 +6,7 @@ const TasksWidget = () => {
             TasksWidget
             {/* component that is in the menu */}
             {/* show tasks where deadline = today */}
+  
         </div>
     );
 };
