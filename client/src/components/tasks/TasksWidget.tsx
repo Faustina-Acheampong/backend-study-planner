@@ -32,9 +32,9 @@ const TasksWidget = () => {
     }, []);
   
     return (
-      <div className="flex flex-col p-4 border text-center bg-gray-300 hover:bg-gray-400 text-gray-900 transition my-4 font-semibold rounded-lg shadow-inner">
-        <div className="text-center p-6 bg-purple-100 hover:bg-purple-200 rounded-xl shadow-lg flex-row">
-          <h1 className="w-full py-2 px-4 block bg-purple-100 hover:bg-purple-200 rounded-lg text-gray-900 font-semibold transition my-4 text-center font-sans">
+      <div className="flex flex-col p-4 border text-center bg-purple-100 hover:bg-purple-200 text-gray-900 transition my-4 font-semibold rounded-lg shadow-inner">
+        <div className="text-center p-6 bg-white-100 rounded-xl shadow-lg flex-row">
+          <h1 className="w-full py-2 px-4 block bg-white-100 rounded-lg text-gray-900 font-semibold transition my-4 text-center font-sans">
             Today's Tasks
           </h1>
           <div>
