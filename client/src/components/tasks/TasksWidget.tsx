@@ -32,9 +32,10 @@ const TasksWidget = () => {
     }, []);
   
     return (
-      <div className="flex flex-col p-4 border text-center bg-purple-100 hover:bg-purple-200 text-gray-900 transition my-4 font-semibold rounded-lg shadow-inner">
-        <div className="text-center p-6 bg-white-100 rounded-xl shadow-lg flex-row">
-          <h1 className="w-full py-2 px-4 block bg-white-100 rounded-lg text-gray-900 font-semibold transition my-4 text-center font-sans">
+      <div className="flex flex-row p-4 border text-center bg-purple-100 hover:bg-purple-200 text-gray-900 transition my-4 font-semibold rounded-lg shadow-inner">
+          <div className="text-center p-6 bg-gray-300 hover:bg-gray-400 rounded-xl shadow-lg flex-row">
+        
+          <h1 className="font-semibold bg-white rounded-lg shadow-inner p-2 mb-4 flex flex-row justify-center">
             Today's Tasks
           </h1>
           <div>
@@ -45,16 +46,16 @@ const TasksWidget = () => {
             ) : tasks.length > 0 ? (
               tasks.map((task) => (
                 <div key={task.id} className="my-2">
-                  <h3>{task.task_title}</h3>
-                  <p>{task.task_description || 'No description available'}</p>
-                  <p>Priority: {task.task_priority}</p>
+                  <h3 className='text-sm text-gray-600 bg-white rounded-lg shadow-inner p-2 mb-4'>{task.task_title}</h3>
+                  <p className='text-sm text-gray-600 bg-white rounded-lg shadow-inner p-2 mb-4'>{task.task_description || 'No description available'}</p>
+                  <p className='text-sm text-gray-600 bg-white rounded-lg shadow-inner p-2 mb-4'>Priority: {task.task_priority}</p>
                 </div>
               ))
             ) : (
               <p>No tasks for today</p>
             )}
           </div>
-        </div>
+          </div>
       </div>
     );
   };
