@@ -57,6 +57,7 @@ const TimeWidget = () => {
   return (
     <div>
       {/* TimeWidget */}
+      
       <h2 className=" text-gray-900  transition my-4 text-center font-semibold font-sans">
         Timer
       </h2>
@@ -68,7 +69,7 @@ const TimeWidget = () => {
           {formateTime(time)}
         </span>
         {/* Buttons Section */}
-        <div className="flex space-x-4">
+        <div className="flex space-x-4 flex-col sm:flex-row">
           {/* Start Button */}
           <button
             onClick={startTime}
