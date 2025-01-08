@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const assignmentSchema = new mongoose.Schema({
   title: {
@@ -26,8 +26,8 @@ const assignmentSchema = new mongoose.Schema({
     default: [],
   },
   course_id: {
-    type: Number,
-    ref: 'Course',
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Course",
     required: true,
   },
   created_at: {
@@ -36,7 +36,7 @@ const assignmentSchema = new mongoose.Schema({
   },
 });
 
-assignmentSchema.set('toJSON', {
+assignmentSchema.set("toJSON", {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString();
     delete returnedObject._id;
@@ -44,5 +44,5 @@ assignmentSchema.set('toJSON', {
   },
 });
 
-const Assignment = mongoose.model('Assignment', assignmentSchema);
+const Assignment = mongoose.model("Assignment", assignmentSchema);
 export default Assignment;

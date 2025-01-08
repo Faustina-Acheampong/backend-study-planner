@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import axios from "axios";
 
 interface Task {
@@ -49,6 +49,8 @@ export default function AssignmentPage() {
     return <p>Error: {error}</p>;
   }
 
+  console.log("assignment page");
+
   return (
     <div className="rounded-lg border p-6">
       <div className="mb-6 flex items-center justify-between">
@@ -62,18 +64,9 @@ export default function AssignmentPage() {
               className="rounded-md border pl-9 pr-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
           </div>
-          <button className="inline-flex items-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-700">
-            <Plus className="mr-2 h-4 w-4" />
-            Add Task
-          </button>
         </div>
       </div>
 
-      <input
-        type="text"
-        placeholder="Add a new task"
-        className="rounded-md border pl-9 pr-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-      />
       <div className="divide-y">
         {(showAll ? assignments : assignments.slice(0, 3)).map((assignment) => (
           <div
