@@ -68,13 +68,12 @@ export default function TimePage() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const PORT = process.env.PORT || 3005;
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [tasksResponse, coursesResponse] = await Promise.all([
-            fetch(`http://localhost:${PORT}/api/tasks`),
-            fetch(`http://localhost:${PORT}/api/courses`),
+            fetch(`${process.env.BASE_URL}/api/tasks`),
+            fetch(`${process.env.BASE_URL}/api/courses`),
         ]);
 
         if (!tasksResponse.ok || !coursesResponse.ok) {
