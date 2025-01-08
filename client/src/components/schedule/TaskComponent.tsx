@@ -205,7 +205,7 @@ const TaskComponent = () => {
                 </button>
                 <button
                   onClick={() => handleDeleteTask(task.id)}
-                  className="bg-red-500 text-white px-3 py-2 rounded-lg shadow-inner  hover:bg-red-600"
+                  className="bg-red-600 text-white px-3 py-2 rounded-lg shadow-inner  hover:bg-red-700"
                 >
                   Delete
                 </button>
