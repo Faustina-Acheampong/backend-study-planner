@@ -21,7 +21,7 @@ const Modal: React.FC<ModalProps> = ({
   const formatDate = (date: string | null) => {
     if (date) {
       const parsedDate = new Date(date);
-      return parsedDate.toISOString().split('T')[0]; 
+      return parsedDate.toISOString().split("T")[0];
     }
     return "";
   };
@@ -40,7 +40,9 @@ const Modal: React.FC<ModalProps> = ({
         <textarea
           placeholder="Description"
           value={formData["task_description"] || ""}
-          onChange={(e) => handleInputChange("task_description", e.target.value)}
+          onChange={(e) =>
+            handleInputChange("task_description", e.target.value)
+          }
           className="border p-2 w-full mb-4"
         />
         <select
@@ -54,11 +56,14 @@ const Modal: React.FC<ModalProps> = ({
         </select>
         <input
           type="date"
-          value={formatDate(formData["task_due_date"] || "")}  
+          value={formatDate(formData["task_due_date"] || "")}
           onChange={(e) => handleInputChange("task_due_date", e.target.value)}
           className="border p-2 w-full mb-4"
         />
-        <button onClick={onSave} className="bg-blue-500 text-white p-2 rounded w-full">
+        <button
+          onClick={onSave}
+          className="bg-blue-500 text-white p-2 rounded w-full"
+        >
           Save
         </button>
         <button

@@ -8,7 +8,9 @@ import TasksWidget from "../tasks/TasksWidget";
 
 
 const ScheduleWidget = () => {
-  const [weeklyTasks, setWeeklyTasks] = useState<{ [key: string]: any[] }>({}); // Tasks grouped by day
+  const [weeklyTasks, setWeeklyTasks] = useState<{ [key: string]: any[] }>({}); 
+  const [todayTasks, setTodayTasks] = useState<any[]>([]);
+
 
 
   useEffect(() => {
@@ -28,6 +30,7 @@ const ScheduleWidget = () => {
         params: { date: formattedDate },
       });
     });
+
     try {
       const results = await Promise.all(promises);
       const tasksByDay: { [key: string]: any[] } = {};
@@ -39,6 +42,11 @@ const ScheduleWidget = () => {
       console.error("Error fetching weekly tasks:", error);
     }
   };
+
+  
+
+
+  
   return (
     <div className="container">
     <div className="flex justify-between items-center mb-4">
@@ -48,7 +56,7 @@ const ScheduleWidget = () => {
       >
         Calendar Week/Month View
       </Link>
-      <button className="px-4 py-2 bg-blue-300 text-black rounded hover:bg-blue-400">
+      <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
         Show All
       </button>
     </div>
