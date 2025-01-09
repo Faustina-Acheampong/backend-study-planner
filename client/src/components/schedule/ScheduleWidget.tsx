@@ -151,9 +151,7 @@ const ScheduleWidget = () => {
                   weeklyCourses[day].slice(0, 2).map((course) => (
                   <div key={course.id} className="border-b last:border-0 py-1 text-left">
                     <h3 className="font-semibold mb-2 text-center">{course.course_name}</h3>
-                    <h5 className="text-center">{course.course_instructor}</h5>
-                    <p className="text-center text-sm">{course.course_time.start} - {course.course_time.end}</p>
-                    <p className="text-center text-sm">{course.course_location}</p>
+                    
                   </div>
                 ))
               ) : (
@@ -174,12 +172,8 @@ const ScheduleWidget = () => {
                     <h3 className="font-semibold mb-2 text-center">a
                       Title = {assignment.title}
                     </h3>
-                    <h5 className="text-center">
-                      Due = {new Date(assignment.due_date).toLocaleDateString()}
-                    </h5>
-                    <h4 className="text-sm text-center text-gray-600">
-                      Status = {assignment.status}
-                    </h4>
+                   
+                   
                   </div>
                 ))
               ) : (
