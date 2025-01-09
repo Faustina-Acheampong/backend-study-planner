@@ -49,7 +49,10 @@ const TimeWidget = () => {
   // Format time as MM:SS
 
   const formateTime = (timeInSeconds: number): string => {
-    const minutes: string = String(Math.floor(timeInSeconds / 60)).padStart(2, "0");
+    const minutes: string = String(Math.floor(timeInSeconds / 60)).padStart(
+      2,
+      "0"
+    );
     const seconds: string = String(timeInSeconds % 60).padStart(2, "0");
     return `${minutes}:${seconds}`;
   };
@@ -57,8 +60,8 @@ const TimeWidget = () => {
   return (
     <div>
       {/* TimeWidget */}
-      <h2> Time Tacker</h2>
-      <div className="flex space-x-4 flex-col sm:flex-row j">
+
+      {/* <div className="flex space-x-4 flex-col sm:flex-row j">
       
           <button
            
@@ -74,8 +77,23 @@ const TimeWidget = () => {
             <CircleStop size={20} className="mr-2" />
         
           </button>
+        </div> */}
+      <h2 className=" text-gray-900  transition my-4 text-center font-semibold font-sans">
+        Time Tracker
+      </h2>
+      <div className="flex items-center justify-between bg-teal-500 text-white rounded-lg px-4 py-6 ">
+        <div  className="text-center">01:00:00</div>
+
+        <div className="flex space-x-2">
+          <button className="bg-green-600 text-white px-1 py-1 rounded-lg flex items-center" >
+          <CirclePlay  />
+          </button>
+          <button className="bg-red-600 text-white px-1 py-1 rounded-lg flex items-center">
+          <CircleStop  />
+          </button>
         </div>
-      
+      </div>
+
       <h2 className=" text-gray-900  transition my-4 text-center font-semibold font-sans">
         Timer
       </h2>
