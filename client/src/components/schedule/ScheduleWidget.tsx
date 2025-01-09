@@ -53,10 +53,9 @@ const ScheduleWidget = () => {
   const fetchCourses = async () => {
     try {
       const response = await axios.get("http://localhost:8000/api/courses");
-      console.log("Full API Response:", response.data); // Log the full response
+      console.log("Full API Response:", response.data); 
   
-      // Access the courses array inside the 'data' property of the response
-      const courses = response.data.data || []; // Adjusted this to access the correct property
+      const courses = response.data.data || []; 
   
       if (Array.isArray(courses)) {
         const coursesByDay: { [key: string]: any[] } = {};
@@ -162,13 +161,8 @@ const ScheduleWidget = () => {
               )}
             </div>
 
-            {/* Assignments Section (static, for now) */}
-            {/* <div className="bg-white rounded-lg shadow-inner p-2">
-              <h4 className="text-sm font-bold mb-1">Assignments</h4>
-              <p className="text-sm text-gray-500">
-                No assignments for this day
-              </p>
-            </div> */}
+            {/* Assignments Section  */}
+            
              <div className="bg-white rounded-lg shadow-inner p-2">
               <h4 className="text-sm font-bold mb-1">Assignments</h4>
               {weeklyAssignments[day]?.length > 0 ? (
