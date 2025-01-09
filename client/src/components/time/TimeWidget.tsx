@@ -57,6 +57,24 @@ const TimeWidget = () => {
   return (
     <div>
       {/* TimeWidget */}
+      <h2> Time Tacker</h2>
+      <div className="flex space-x-4 flex-col sm:flex-row j">
+      
+          <button
+           
+            className="bg-green-500 text-white px-4 py-2 rounded-lg shadow-md flex items-center hover:bg-green-800 transition"
+          >
+            <CirclePlay size={15} className="mr-2" />
+          
+          </button>
+          <button
+     
+            className="bg-red-500 text-white px-4 py-2 rounded-lg shadow-md flex items-center hover:bg-red-800 transition"
+          >
+            <CircleStop size={20} className="mr-2" />
+        
+          </button>
+        </div>
       
       <h2 className=" text-gray-900  transition my-4 text-center font-semibold font-sans">
         Timer
