@@ -144,10 +144,7 @@ const ScheduleWidget = () => {
               )}
             </div>
 
-            {/* <div className="bg-white rounded-lg shadow-inner p-2 mb-4">
-            <h4 className="text-sm font-bold mb-1">Courses</h4>
-            <p className="text-sm text-gray-500">No courses for this day</p>
-          </div> */}
+           
             {/* Courses Section */}
             <div className="bg-white rounded-lg shadow-inner p-2 mb-4">
               <h4 className="text-sm font-bold mb-1">Courses</h4>
@@ -180,7 +177,7 @@ const ScheduleWidget = () => {
                     key={assignment.id}
                     className="border-b last:border-0 py-1 text-left"
                   >
-                    <h3 className="font-semibold mb-2 text-center">
+                    <h3 className="font-semibold mb-2 text-center">a
                       Title = {assignment.title}
                     </h3>
                     <h5 className="text-center">
