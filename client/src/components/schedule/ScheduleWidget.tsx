@@ -190,7 +190,7 @@ const ScheduleWidget = () => {
           </div>
         ))}
       </div>
-      <TaskComponent />
+     
     </div>
   );
 };
