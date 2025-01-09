@@ -149,7 +149,7 @@ const ScheduleWidget = () => {
             <div className="bg-white rounded-lg shadow-inner p-2 mb-4">
               <h4 className="text-sm font-bold mb-1">Courses</h4>
               {weeklyCourses[day]?.length > 0 ? (
-                weeklyCourses[day].map((course) => (
+                  weeklyCourses[day].slice(0, 2).map((course) => (
                   <div key={course.id} className="border-b last:border-0 py-1 text-left">
                     <h3 className="font-semibold mb-2 text-center">{course.course_name}</h3>
                     <h5 className="text-center">{course.course_instructor}</h5>
@@ -172,7 +172,7 @@ const ScheduleWidget = () => {
              <div className="bg-white rounded-lg shadow-inner p-2">
               <h4 className="text-sm font-bold mb-1">Assignments</h4>
               {weeklyAssignments[day]?.length > 0 ? (
-                weeklyAssignments[day].map((assignment) => (
+                weeklyAssignments[day].slice(0, 2).map((assignment) => (
                   <div
                     key={assignment.id}
                     className="border-b last:border-0 py-1 text-left"
