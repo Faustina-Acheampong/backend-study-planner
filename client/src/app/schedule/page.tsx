@@ -4,6 +4,7 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import axios from "axios";
 import { TaskType } from "@/types/task";
+import TaskComponent from "@/components/schedule/TaskComponent";
 
 /* schedule calendar view */
 
@@ -66,9 +67,11 @@ export default function SchedulePage() {
                 )}
               </ul>
             </div>
+            <TaskComponent />
           </div>
         </div>
       </div>
+    
     </div>
   );
 }

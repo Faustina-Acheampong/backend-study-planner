@@ -42,6 +42,7 @@ const Menu = () => {
       >
         Assignments
       </Link>
+      
       {/* Shortcuts Component */}
       <div className="w-full py-2 px-4 block bg-purple-100 hover:bg-purple-200 rounded-lg text-gray-900 font-semibold transition my-4 text-center">
         <div className="text-centerp-6 bg-purple-100 hover:bg-purple-200 rounded-xl shadow-lg  flex-row">
