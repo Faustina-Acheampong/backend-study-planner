@@ -10,18 +10,32 @@ assignmentsRouter.get("/", async (req, res) => {
     const assignments = await Assignment.find();
     res.status(200).json(assignments);
   } catch (error) {
-    res.status(500).json({ message: "Failed to fetch assignments" });
+    res.status(400).json({ message: "Failed to fetch assignments" });
   }
 });
 
-// get req by id
+// get assignment according to CourseID
+assignmentsRouter.get("/course/:course_id", async (req, res) => {
+  const courseId = req.params.course_id;
+  console.log("course id", courseId);
+
+  try {
+    const assignments = await Assignment.find({ course_id: courseId });
+    res.status(200).json(assignments);
+  } catch (error) {
+    res.status(400).json({ message: "Failed to fetch assignments" });
+  }
+});
+
+// get by id
 assignmentsRouter.get("/:id", async (req, res) => {
   const id = req.params.id;
+
   try {
     const assignments = await Assignment.findById(id);
     res.status(200).json(assignments);
   } catch (error) {
-    res.status(500).json({ message: "Failed to fetch assignments" });
+    res.status(400).json({ message: "Failed to fetch assignments" });
   }
 });
 
@@ -76,7 +90,7 @@ assignmentsRouter.delete("/:id", async (req, res) => {
     });
   } catch (error) {
     res
-      .status(500)
+      .status(400)
       .json({ message: "Failed to delete assignment", error: error.message });
   }
 });
@@ -106,7 +120,7 @@ assignmentsRouter.put("/:id", async (req, res) => {
     });
   } catch (error) {
     res
-      .status(500)
+      .status(400)
       .json({ message: "Failed to update assignment", error: error.message });
   }
 });
