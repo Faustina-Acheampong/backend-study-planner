@@ -55,7 +55,13 @@ const Menu = () => {
           </p>
         </div>
       </div>
-      <TimeWidget />
+      <Link
+        href="/time"
+        className=""
+      >
+              <TimeWidget />
+
+      </Link>
       <TasksWidget />
     </div>
   );

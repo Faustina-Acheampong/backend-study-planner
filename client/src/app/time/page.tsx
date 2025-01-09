@@ -1,6 +1,5 @@
 "use client";
 
-import "dotenv/config";
 
 import {
   Chart as ChartJS,
@@ -68,13 +67,16 @@ export default function TimePage() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:8000';
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [tasksResponse, coursesResponse] = await Promise.all([
-            fetch(`${process.env.BASE_URL}/api/tasks`),
-            fetch(`${process.env.BASE_URL}/api/courses`),
+            fetch(`${baseUrl}/api/tasks`),
+            fetch(`${baseUrl}/api/courses`),
         ]);
+        console.log(`asdasdsad ${process.env.BASE_URL}/api/tasks`)
 
         if (!tasksResponse.ok || !coursesResponse.ok) {
           throw new Error("Failed to fetch data");
