@@ -35,6 +35,13 @@ export default function CoursePage() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [assignments, setAssignments] = useState([]);
 
+  // delete assignment
+  const deleteAssignment = (id) => {
+    setAssignments((prevAssignments) =>
+      prevAssignments.filter((assignment) => assignment.id !== id)
+    );
+  };
+
   useEffect(() => {
     if (id) {
       dispatch(fetchCourseById(id));
@@ -169,6 +176,23 @@ export default function CoursePage() {
 
         <div className="container mx-auto p-4">
           <h1 className="text-2xl font-bold mb-4">Assignments</h1>
+          <div className="flex flex-row justify-between items-start space-x-6 mb-4 p-6 bg-gray-50 rounded-lg shadow-md">
+            <div className="flex flex-col space-y-4 w-full max-w-sm">
+              <button className="px-8 py-3 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition duration-300 ease-in-out shadow-md hover:shadow-lg">
+                Add
+              </button>
+              <input
+                type="text"
+                placeholder="Add an Assignment"
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+              />
+              <input
+                type="text"
+                placeholder="Category"
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ease-in-out"
+              />
+            </div>
+          </div>
           <table className="w-full border-collapse border border-gray-200">
             <thead>
               <tr className="bg-gray-100">
@@ -220,6 +244,14 @@ export default function CoursePage() {
                     >
                       {a.status}
                     </span>
+                  </td>
+                  <td>
+                    <button
+                      onClick={() => deleteAssignment(a.id)}
+                      className="text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300 rounded-lg py-2 px-4 transition duration-200 ease-in-out"
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))}
