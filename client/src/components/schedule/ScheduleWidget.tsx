@@ -9,12 +9,17 @@ import TasksWidget from "../tasks/TasksWidget";
 
 const ScheduleWidget = () => {
   const [weeklyTasks, setWeeklyTasks] = useState<{ [key: string]: any[] }>({}); 
+  const [weeklyCourses, setWeeklyCourses] = useState<{ [key: string]: any[] }>({});
+  const [weeklyAssignments, setWeeklyAssignments] = useState<{ [key: string]: any[] }>({});
   const [todayTasks, setTodayTasks] = useState<any[]>([]);
+  const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 
 
 
   useEffect(() => {
     fetchWeeklyTasks();
+    fetchCourses();
+    fetchAssignments();
   }, []);
 
 
@@ -43,7 +48,44 @@ const ScheduleWidget = () => {
     }
   };
 
+
+  const fetchCourses = async () => {
+    try {
+      const response = await axios.get("http://localhost:8000/api/courses");
+      const courses = response.data || [];
+      const coursesByDay: { [key: string]: any[] } = {};
+
+      daysOfWeek.forEach((day) => {
+        coursesByDay[day] = courses.filter((course: any) => course.course_day === day);
+      });
+
+      setWeeklyCourses(coursesByDay);
+    } catch (error) {
+      console.error("Error fetching courses:", error);
+    }
+  };
   
+  const fetchAssignments = async () => {
+    try {
+      const response = await axios.get("http://localhost:8000/api/assignments");
+      const assignments = response.data || [];
+      const assignmentsByDay: { [key: string]: any[] } = {};
+
+      daysOfWeek.forEach((day) => {
+        assignmentsByDay[day] = assignments.filter((assignment: any) => {
+          const assignmentDate = new Date(assignment.due_date);
+          const assignmentDay = assignmentDate.toLocaleDateString("en-US", {
+            weekday: "long",
+          });
+          return assignmentDay === day;
+        });
+      });
+
+      setWeeklyAssignments(assignmentsByDay);
+    } catch (error) {
+      console.error("Error fetching assignments:", error);
+    }
+  };
 
 
   
@@ -87,11 +129,32 @@ const ScheduleWidget = () => {
              
           </div>
           
-          {/* Courses Section (static, for now) */}
-          <div className="bg-white rounded-lg shadow-inner p-2 mb-4">
+          
+          {/* <div className="bg-white rounded-lg shadow-inner p-2 mb-4">
             <h4 className="text-sm font-bold mb-1">Courses</h4>
             <p className="text-sm text-gray-500">No courses for this day</p>
-          </div>
+          </div> */}
+          {/* Courses Section */}
+          <div className="bg-white rounded-lg shadow-inner p-2 mb-4">
+              <h4 className="text-sm font-bold mb-1">Courses</h4>
+              {weeklyCourses[day]?.length > 0 ? (
+                weeklyCourses[day].map((course) => (
+                  <div
+                    key={course.id}
+                    className="border-b last:border-0 py-1 text-left"
+                  >
+                    <h3 className="font-semibold mb-2 text-center">
+                      Course = {course.course_name}
+                    </h3>
+                    <h5 className="text-center">
+                      Instructor = {course.course_instructor}
+                    </h5>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-gray-500">No courses for this day</p>
+              )}
+            </div>
 
           {/* Assignments Section (static, for now) */}
           <div className="bg-white rounded-lg shadow-inner p-2">
