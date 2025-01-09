@@ -53,23 +53,26 @@ const ScheduleWidget = () => {
   const fetchCourses = async () => {
     try {
       const response = await axios.get("http://localhost:8000/api/courses");
-      console.log(response.data); // Log the data for debugging
-      const courses = response.data || [];
-      const coursesByDay: { [key: string]: any[] } = {};
-
-      ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].forEach(
-        (day) => {
-          coursesByDay[day] = courses.filter(
-            (course: any) => course.course_day === day
-          );
-        }
-      );
-
-      setWeeklyCourses(coursesByDay);
+      console.log("Full API Response:", response.data); // Log the full response
+  
+      // Access the courses array inside the 'data' property of the response
+      const courses = response.data.data || []; // Adjusted this to access the correct property
+  
+      if (Array.isArray(courses)) {
+        const coursesByDay: { [key: string]: any[] } = {};
+        ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].forEach((day) => {
+          coursesByDay[day] = courses.filter((course: any) => course.course_day === day);
+        });
+        setWeeklyCourses(coursesByDay);
+      } else {
+        console.error("Expected an array of courses, but got:", courses);
+      }
     } catch (error) {
       console.error("Error fetching courses:", error);
     }
   };
+  
+  
 
   const fetchAssignments = async () => {
     try {
@@ -150,16 +153,11 @@ const ScheduleWidget = () => {
               <h4 className="text-sm font-bold mb-1">Courses</h4>
               {weeklyCourses[day]?.length > 0 ? (
                 weeklyCourses[day].map((course) => (
-                  <div
-                    key={course.id}
-                    className="border-b last:border-0 py-1 text-left"
-                  >
-                    <h3 className="font-semibold mb-2 text-center">
-                      Course = {course.course_name}
-                    </h3>
-                    <h5 className="text-center">
-                      Instructor = {course.course_instructor}
-                    </h5>
+                  <div key={course.id} className="border-b last:border-0 py-1 text-left">
+                    <h3 className="font-semibold mb-2 text-center">{course.course_name}</h3>
+                    <h5 className="text-center">{course.course_instructor}</h5>
+                    <p className="text-center text-sm">{course.course_time.start} - {course.course_time.end}</p>
+                    <p className="text-center text-sm">{course.course_location}</p>
                   </div>
                 ))
               ) : (
@@ -168,12 +166,36 @@ const ScheduleWidget = () => {
             </div>
 
             {/* Assignments Section (static, for now) */}
-            <div className="bg-white rounded-lg shadow-inner p-2">
+            {/* <div className="bg-white rounded-lg shadow-inner p-2">
               <h4 className="text-sm font-bold mb-1">Assignments</h4>
               <p className="text-sm text-gray-500">
                 No assignments for this day
               </p>
+            </div> */}
+             <div className="bg-white rounded-lg shadow-inner p-2">
+              <h4 className="text-sm font-bold mb-1">Assignments</h4>
+              {weeklyAssignments[day]?.length > 0 ? (
+                weeklyAssignments[day].map((assignment) => (
+                  <div
+                    key={assignment.id}
+                    className="border-b last:border-0 py-1 text-left"
+                  >
+                    <h3 className="font-semibold mb-2 text-center">
+                      Title = {assignment.title}
+                    </h3>
+                    <h5 className="text-center">
+                      Due = {new Date(assignment.due_date).toLocaleDateString()}
+                    </h5>
+                    <h4 className="text-sm text-center text-gray-600">
+                      Status = {assignment.status}
+                    </h4>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-gray-500">No assignments for this day</p>
+              )}
             </div>
+        
           </div>
         ))}
       </div>
