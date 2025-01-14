@@ -11,6 +11,9 @@ import { notesRouter } from "./controllers/notes.js";
 import { tasksRouter } from "./controllers/tasks.js";
 import timesRouter from "./controllers/times.js";
 
+
+import swaggerDocs from './swagger-config.js'; 
+
 export const app = express();
 mongoose.set("strictQuery", false);
 
@@ -24,6 +27,8 @@ mongoose
     console.log("error connecting to MongoDB:", error.message);
   });
 
+swaggerDocs(app); 
+
 app.use(cors());
 app.use(express.static("build"));
 app.use(express.json());
@@ -35,3 +40,5 @@ app.use("/api/courses", coursesRouter);
 app.use("/api/notes", notesRouter);
 app.use("/api/tasks", tasksRouter);
 app.use("/api/times", timesRouter);
+
+
